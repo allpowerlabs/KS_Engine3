@@ -1,5 +1,4 @@
 // Datalogging
-
 void LogTime(boolean header = false) {
   if (header) {
     Serial.print("#Time [desisec],");
