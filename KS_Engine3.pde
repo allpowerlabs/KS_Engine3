@@ -37,7 +37,7 @@ int GRATE_SOLENOID = FET5;
 //int GRATE_MOTOR_1 = FET6;
 unsigned long gratePeriod = 300000;
 int gratePulseLength = 30000;
-int grateMode = GRATE_ON;
+int grateMode = GRATE_PRATIO;
 unsigned long nextGrate;
 float pRatio, pRatioSmooth;
 boolean pRatioHigh;
