@@ -80,20 +80,31 @@ void LogGrate(boolean header = false) {
 
 void LogPressures(boolean header = false) {
   if (header) {
-    Serial.print("P0,P1,P2,P3,P4,P5,");
+    if (GCU_fill == FULLFILL) {
+      Serial.print("P0,P1,P2,P3,P4,P5,");
+    } else {
+      Serial.print("P0,P4,");
+    }
   } else {
-    Serial.print(Press[0]);
-    Serial.print(", ");
-    Serial.print(Press[1]);
-    Serial.print(", ");
-    Serial.print(Press[2]);
-    Serial.print(", ");
-    Serial.print(Press[3]);
-    Serial.print(", ");
-    Serial.print(Press[4]);
-    Serial.print(", ");
-    Serial.print(Press[5]);
-    Serial.print(", ");
+    if (GCU_fill == FULLFILL) {
+      Serial.print(Press[0]);
+      Serial.print(", ");
+      Serial.print(Press[1]);
+      Serial.print(", ");
+      Serial.print(Press[2]);
+      Serial.print(", ");
+      Serial.print(Press[3]);
+      Serial.print(", ");
+      Serial.print(Press[4]);
+      Serial.print(", ");
+      Serial.print(Press[5]);
+      Serial.print(", ");
+    } else {
+      Serial.print(Press[0]);
+      Serial.print(", ");
+      Serial.print(Press[4]);
+      Serial.print(", ");
+    }
   }
 }
 
