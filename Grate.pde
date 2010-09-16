@@ -7,7 +7,8 @@ void DoGrate() {
       grateOn = true;
       //re-do brackets for period based shake
     } else {
-     analogWrite(GRATE_SOLENOID,0);
+      analogWrite(GRATE_SOLENOID,0);
+      grateOn = false;
   }
   if (millis() >= nextGrate) {
     nextGrate += gratePeriod;
