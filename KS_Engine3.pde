@@ -68,8 +68,8 @@ int hertz = 0;
 //PP #6
 double premix_valve_open = 120; //calibrated angle for servo valve open
 double premix_valve_closed = 0; //calibrated angle for servo valve closed
-double premix_valve_range = 50;
-double premix_valve_center = 50;
+double premix_valve_range = 60;
+double premix_valve_center = 55;
 //PP #2
 //double premix_valve_open = 20; //calibrated angle for servo valve open
 //double premix_valve_closed = -120; //calibrated angle for servo valve closed
@@ -167,7 +167,7 @@ int LOW_FUEL_TC = 3;
 int alarm_interval = 5; // in seconds
 
 void setup() {
-  GCU_Setup(V3,FULLFILL,1);
+  GCU_Setup(V3,HALFFILL,P777722);
   //
   DDRJ |= 0x80;      
   PORTJ |= 0x80;   
