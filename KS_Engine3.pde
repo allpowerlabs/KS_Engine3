@@ -30,7 +30,6 @@
 
 //Dataloggin variables
 int lineCount = 0;
-
 // Grate turning variables
 int GRATE_SOLENOID = FET5;
 //int GRATE_MOTOR_0 = FET7;
