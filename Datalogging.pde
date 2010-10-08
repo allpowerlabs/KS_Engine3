@@ -1,7 +1,7 @@
 // Datalogging
 void LogTime(boolean header = false) {
   if (header) {
-    Serial.print("#Time [desisec],");
+    Serial.print("#Time,");
   } else {
     Serial.print(millis()/100); // time since restart in deciseconds
     Serial.print(", ");
@@ -57,24 +57,34 @@ void LogAnalogInputs(boolean header = false) {
 
 void LogGrate(boolean header = false) {
   if (header) {
-    Serial.print("Grate,P_ratio,P_ratio_state,");
+    Serial.print("Grate,P_ratio,P_ratio_state,Grate_Val,");
   } else {
-    if (grateOn) {
-      Serial.print("grate_on");
+    Serial.print(grate_motor_state);
+    Serial.print(", ");
+    Serial.print(pRatioReactor);
+    Serial.print(", ");
+    if (pRatioReactorHigh) {
+      Serial.print(1);
     } else {
-      Serial.print("grate_off");
+      Serial.print(0);
     }
     Serial.print(", ");
-    Serial.print(pRatio);
+    Serial.print(grate_val);
     Serial.print(", ");
-    //Serial.print(P_comb);
-    //Serial.print(", ");
-    if (pRatioHigh) {
-      Serial.print("pRatioHigh");
+  }
+}
+
+void LogFilter(boolean header = false) {
+   if (header) {
+     Serial.print("P_ratio_filter,P_ratio_filter_state,");
+  } else {
+    Serial.print(pRatioFilter);
+    Serial.print(", ");
+    if (pRatioFilterHigh) {
+      Serial.print(1);
     } else {
-      Serial.print("pRatioLow");
+      Serial.print(0);
     }
-    Serial.print(", ");
   }
 }
 
@@ -110,7 +120,7 @@ void LogPressures(boolean header = false) {
 
 void LogTemps(boolean header = false) {
   if (header) {
-    Serial.print("T0,T1,T2,T3,T4,T5,");
+    Serial.print("T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,");
   } else {
     Serial.print(Temp_Data[0]);
     Serial.print(", ");
@@ -120,10 +130,17 @@ void LogTemps(boolean header = false) {
     Serial.print(", ");
     Serial.print(Temp_Data[3]);
     Serial.print(", ");
+    Serial.print(Temp_Data[4]);
     Serial.print(", ");
     Serial.print(Temp_Data[5]);
     Serial.print(", ");
     Serial.print(Temp_Data[6]);
+    Serial.print(", ");
+    Serial.print(Temp_Data[7]);
+    Serial.print(", ");
+    Serial.print(Temp_Data[8]);
+    Serial.print(", ");
+    Serial.print(Temp_Data[9]);
     Serial.print(", ");
   }
 }
@@ -168,9 +185,10 @@ void DoDatalogging() {
   LogPressures(header);
   //LogFlows(header);
   LogGrate(header);
+  LogFilter(header);
   LogAnalogInputs(header);
   LogPID(header);
-  //LogEnergy(header);
+  LogEnergy(header);
   LogAuger(header);
   Serial.println();
   lineCount++;
