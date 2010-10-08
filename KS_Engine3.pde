@@ -1,46 +1,70 @@
-#include <EEPROM.h>
-#include <PID_Beta6.h>
-#include <adc.h>
-#include <display.h>
-#include <fet.h>
-#include <keypad.h>
-#include <pressure.h>
-#include <servo.h>
-#include <temp.h>
-#include <timer.h>
-#include <ui.h>
-#include <util.h>
-#include <avr/io.h>    
+// KS_Testing
+// Library to use as basis for testing
+// Developed for the APL GCU/PCU: http://gekgasifier.pbworks.com/Gasifier-Control-Unit
 
+#include <EEPROM.h>         // included with Arduino, can read/writes to non-volatile memory
+#include <PID_Beta6.h>      // http://www.arduino.cc/playground/Code/PIDLibrary, http://en.wikipedia.org/wiki/PID_controller
+#include <adc.h>            // part of KSlibs, for reading analog inputs
+#include <display.h>        // part of KSlibs, write to display
+#include <fet.h>            // part of KSlibs, control FETs (field effect transitor) to drive motors, solenoids, etc
+#include <keypad.h>         // part of KSlibs, read buttons and keypad
+#include <pressure.h>       // part of KSlibs, read pressure sensors
+#include <servo.h>          // part of KSlibs, not implemented
+#include <temp.h>           // part of KSlibs, read thermocouples
+#include <timer.h>          // part of KSlibs, not implemented
+#include <ui.h>             // part of KSlibs, menu
+#include <util.h>           // part of KSlibs, utility functions, GCU_Setup
+#include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
+
+// Analog Input Mapping
 #define ANA_LAMBDA 0
 #define ANA_V 1
 #define ANA_CT_LEG1 2
 #define ANA_CT_LEG2 3
 
-//engine mode
-#define ENGINE_OFF 0
-#define ENGINE_ON 1
-#define ENGINE_STARTING 2
+// Grate Shaking States
+#define GRATE_SHAKE_OFF 0
+#define GRATE_SHAKE_ON 1
+#define GRATE_SHAKE_PRATIO 2
 
-#define GRATE_OFF 0
-#define GRATE_ON 1
-#define GRATE_PRATIO 2
+// Grate Motor States
+#define GRATE_MOTOR_OFF 0
+#define GRATE_MOTOR_LOW 1
+#define GRATE_MOTOR_HIGH 2
+#define GRATE_PRATIO_THRESHOLD 180 //number of seconds until we use high shaking mode
 
+// Grate Shaking
+#define GRATE_SHAKE_CROSS 5000
+#define GRATE_SHAKE_INIT 32000
+
+// FET Mapping
 #define ALARM_FET FET6
 
-//Dataloggin variables
+// Datalogging variables
 int lineCount = 0;
+
 // Grate turning variables
-int GRATE_SOLENOID = FET5;
-//int GRATE_MOTOR_0 = FET7;
-//int GRATE_MOTOR_1 = FET6;
-unsigned long gratePeriod = 300000;
-int gratePulseLength = 30000;
-int grateMode = GRATE_PRATIO;
-unsigned long nextGrate;
-float pRatio, pRatioSmooth;
-boolean pRatioHigh;
-boolean grateOn;
+int grateMode = GRATE_SHAKE_PRATIO; //set default starting state
+int GRATE_MOTOR = FET5; //set FET to drive motor
+int grate_motor_state; //changed to indicate state (for datalogging, etc)
+int grate_val = GRATE_SHAKE_INIT; //variable that is changed and checked
+int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger shaking past threshhold
+int grate_max_interval = 120; //longest total interval in seconds
+int grate_min_interval = 15;
+int grate_on_interval = 2;
+//define these in setup, how much to remove from grate_val each cycle [1 second] (slope)
+int m_grate_low; 
+int m_grate_high;
+int m_grate_on;
+
+// Reactor pressure ratio
+float pRatioReactor;
+boolean pRatioReactorHigh;
+
+// Filter pressure ratio
+float pRatioFilter;
+boolean pRatioFilterHigh;
+int filter_pratio_accumulator;
 
 // Flow variables
 float CfA0_air_rct =0.42123;
@@ -50,6 +74,7 @@ double air_eng_flow;
 double air_rct_flow;
 double gas_eng_flow;
 
+// Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
 int loopPeriod0 = 5000;
 unsigned long nextTime0;
 int loopPeriod1 = 1000;
@@ -64,24 +89,19 @@ int hertz = 0;
 
 // Lambda variables
 // Servo Valve Calibration - will vary depending on the servo valve
-//PP #6
-double premix_valve_open = 120; //calibrated angle for servo valve open
-double premix_valve_closed = 0; //calibrated angle for servo valve closed
-double premix_valve_range = 60;
-double premix_valve_center = 55;
-//PP #2
-//double premix_valve_open = 20; //calibrated angle for servo valve open
-//double premix_valve_closed = -120; //calibrated angle for servo valve closed
-//double premix_valve_range = 50;
-//double premix_valve_center = -75;
+//PP #2 (now upgraded to #7)
+double premix_valve_open = 20; //calibrated angle for servo valve open
+double premix_valve_closed = -120; //calibrated angle for servo valve closed
+double premix_valve_range = 50;
+double premix_valve_center = -75;
 double lambda_setpoint;
 double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[3] = {1.0, 1.0, 1.0};
-double lambda_P[3] = {0.6,0.6,1}; //engine on values can be updated from EEPROM
-double lambda_I[3] = {1.0,1.0,1.0};
-double lambda_D[3] = {0,0,0};
+double lambda_P[1] = {0.6}; //engine on values can be updated from EEPROM
+double lambda_I[1] = {1.0};
+double lambda_D[1] = {0};
 PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,0.6,1.0,0);
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
@@ -95,6 +115,8 @@ int P_gas_out;
 int P_comb;
 float P_comb_smooth;
 int P_reactor;
+int P_filter;
+
 
 //Servo 
 int servo_alt = 0; //used to pulse every other time through loop (~20 ms)
@@ -116,7 +138,7 @@ double ICAL1 = 0.151630734;
 double ICAL2 = 0.14774915;
 double PHASECAL = 2.3; //add two for I1 and I2. found by matching w/ code. shifting value and hitting calibrated power factor.
 
-//Sample variables
+//Sampling variables
 int lastSampleV,sampleV;
 int lastSampleI1,sampleI1;
 int lastSampleI2,sampleI2;
@@ -166,7 +188,7 @@ int LOW_FUEL_TC = 3;
 int alarm_interval = 5; // in seconds
 
 void setup() {
-  GCU_Setup(V3,HALFFILL,P777722);
+  GCU_Setup(V3,FULLFILL,P777222);
   //
   DDRJ |= 0x80;      
   PORTJ |= 0x80;   
@@ -221,16 +243,16 @@ void loop() {
     DoLambda();
     DoServos();
     if (millis() >= nextTime2) {
-      //MeasureElectricalPower();
-      //accumulateEnergyValues();
+      MeasureElectricalPower();
+      accumulateEnergyValues();
       if (millis() >= nextTime1) {
         nextTime1 += loopPeriod1;
-        //averageEnergyValues();
+        averageEnergyValues();
         //DoHertz();
         DoGrate();
+        DoFilter();
         DoDatalogging();
         DoAlarmUpdate();
-        grateOn = false;
         if (alarm == true) {
           analogWrite(ALARM_FET, 255);
         } else {
