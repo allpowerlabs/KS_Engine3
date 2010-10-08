@@ -23,7 +23,7 @@ void DoLambda() {
     if (lambda_closed_loop) {
       lambda_input = lambda_value;
       //lambda_setpoint = lambda_setpoint_mode[ENGINE_ON];
-      lambda_PID.SetTunings(lambda_P[ENGINE_ON], lambda_I[ENGINE_ON], lambda_D[ENGINE_ON]);
+      lambda_PID.SetTunings(lambda_P[0], lambda_I[0], lambda_D[0]);
       lambda_PID.Compute();
       servo0_pos = lambda_output;
     } else {
@@ -40,14 +40,14 @@ void DoLambda() {
 
 void WriteLambda() {
   //0-8 for P_calib
-  EEPROM.write(9, lambda_P[ENGINE_ON]*20+128); // stores -6.4 -> 6.4 at 0.05 resolution
-  EEPROM.write(10, lambda_I[ENGINE_ON]*20+128);
-  EEPROM.write(11, lambda_D[ENGINE_ON]*20+128);
+  EEPROM.write(9, lambda_P[0]*20+128); // stores -6.4 -> 6.4 at 0.05 resolution
+  EEPROM.write(10, lambda_I[0]*20+128);
+  EEPROM.write(11, lambda_D[0]*20+128);
 }
 
 void LoadLambda() {
   //0-8 for P_calib
-  lambda_P[ENGINE_ON] = EEPROM.read(9)/20-6.4; // stores -6.4 -> 6.4 at 0.05 resolution
-  lambda_I[ENGINE_ON] = EEPROM.read(10)/20-6.4;
-  lambda_D[ENGINE_ON] = EEPROM.read(11)/20-6.4;
+  lambda_P[0] = EEPROM.read(9)/20-6.4; // stores -6.4 -> 6.4 at 0.05 resolution
+  lambda_I[0] = EEPROM.read(10)/20-6.4;
+  lambda_D[0] = EEPROM.read(11)/20-6.4;
 }
