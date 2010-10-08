@@ -25,7 +25,7 @@ void DoAlarm() {
     alarm = true;
   }
   if (Vrmsave > 50 & (Temp_Data[0]<790 || Temp_Data[1]<790)) {
-    Serial.println("# T_tred and/or T_bred below 790¡C while engine is running");
+    Serial.println("# T_tred and/or T_bred below 790Â°C while engine is running");
     alarm = true;
   }
 }
