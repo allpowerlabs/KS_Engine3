@@ -7,49 +7,49 @@ void DoSerialIn() {
   double d_d = 0.02;
   // Serial input
   if (Serial.available() > 0) {
-    p=lambda_P[ENGINE_ON];
-    i=lambda_I[ENGINE_ON];
-    d=lambda_D[ENGINE_ON];
+    p=lambda_P[0];
+    i=lambda_I[0];
+    d=lambda_D[0];
     switch (Serial.read()) {
     case 'p':
       PrintLambdaUpdate(p,i,d,p+p_d,i,d);
       p=p+p_d;
-      lambda_P[ENGINE_ON]=p;
+      lambda_P[0]=p;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'P':
       PrintLambdaUpdate(p,i,d,p-p_d,i,d);
       p=p-p_d;
-      lambda_P[ENGINE_ON]=p;
+      lambda_P[0]=p;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'i':
       PrintLambdaUpdate(p,i,d,p,i+i_d,d);
       i=i+i_d;
-      lambda_I[ENGINE_ON]=i;
+      lambda_I[0]=i;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'I':
       PrintLambdaUpdate(p,i,d,p,i-i_d,d);
       i=i-i_d;
-      lambda_I[ENGINE_ON]=i;
+      lambda_I[0]=i;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'd':
       PrintLambdaUpdate(p,i,d,p,i,d+d_d);
       d=d+d_d;
-      lambda_D[ENGINE_ON]=d;
+      lambda_D[0]=d;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'D':
       PrintLambdaUpdate(p,i,d,p,i,d-d_d);
       d=d-d_d;
-      lambda_D[ENGINE_ON]=d;
+      lambda_D[0]=d;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
@@ -88,37 +88,40 @@ void DoSerialIn() {
       Serial.println(loopPeriod1);
       break;
     case 'g':  
-      analogWrite(GRATE_SOLENOID, 255);
-      delay(gratePulseLength);
-      analogWrite(GRATE_SOLENOID, 0);
+      grate_val = GRATE_SHAKE_CROSS; //set grate val to shake for grate_on_interval
       Serial.println("#Grate Shaken");
-      grateOn = true;
       break;
     case 'G':  
       switch (grateMode) {
-      case GRATE_OFF:
-        grateMode = GRATE_ON;
+      case GRATE_SHAKE_OFF:
+        grateMode = GRATE_SHAKE_ON;
         Serial.println("#Grate Mode: On");
         break;
-      case GRATE_ON:
-        grateMode = GRATE_PRATIO;
+      case GRATE_SHAKE_ON:
+        grateMode = GRATE_SHAKE_PRATIO;
         Serial.println("#Grate Mode: Pressure Ratio");
         break;
-      case GRATE_PRATIO:
-        grateMode = GRATE_OFF;
+      case GRATE_SHAKE_PRATIO:
+        grateMode = GRATE_SHAKE_OFF;
         Serial.println("#Grate Mode: Off");
         break;
       }
       break;  
     case 'm':
-      gratePeriod += 500;
-      Serial.print("#Grate Interval now:");
-      Serial.println(gratePeriod);
+      grate_max_interval += 5;
+      grate_min_interval = grate_max_interval*0.5;
+      Serial.print("#Grate Max Interval now:");
+      Serial.println(grate_max_interval);
+      Serial.print("#Grate Min Interval now:");
+      Serial.println(grate_min_interval);
       break;
     case 'M':
-      gratePeriod -= 500;
-      Serial.print("#Grate Interval now:");
-      Serial.println(gratePeriod);
+      grate_max_interval -= 5;
+      grate_min_interval = grate_max_interval*0.5;
+      Serial.print("#Grate Max Interval now:");
+      Serial.println(grate_max_interval);
+      Serial.print("#Grate Min Interval now:");
+      Serial.println(grate_min_interval);
       break;   
     }
   }
