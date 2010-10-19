@@ -1,7 +1,7 @@
 // Datalogging
 void LogTime(boolean header = false) {
   if (header) {
-    Serial.print("#Time,");
+    Serial.print("Time,");
   } else {
     Serial.print(millis()/100); // time since restart in deciseconds
     Serial.print(", ");
@@ -57,7 +57,7 @@ void LogAnalogInputs(boolean header = false) {
 
 void LogGrate(boolean header = false) {
   if (header) {
-    Serial.print("Grate,P_ratio,P_ratio_state,Grate_Val,");
+    Serial.print("Grate,P_ratio_reactor,P_ratio_state_reactor,Grate_Val,");
   } else {
     Serial.print(grate_motor_state);
     Serial.print(", ");
@@ -85,6 +85,7 @@ void LogFilter(boolean header = false) {
     } else {
       Serial.print(0);
     }
+    Serial.print(", ");
   }
 }
 
@@ -120,7 +121,11 @@ void LogPressures(boolean header = false) {
 
 void LogTemps(boolean header = false) {
   if (header) {
-    Serial.print("T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,");
+    if (true) {
+      Serial.print("T_tred,T_bred,T_pyro_in,T3,T_pyro_out,T5,T6,T7,T8,T9,");
+    } else {
+      Serial.print("T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,");
+    }
   } else {
     Serial.print(Temp_Data[0]);
     Serial.print(", ");
@@ -143,13 +148,13 @@ void LogTemps(boolean header = false) {
     Serial.print(Temp_Data[9]);
     Serial.print(", ");
   }
-}
+} 
 
 void LogAuger(boolean header = false) {
   if (header) {
     Serial.print("Auger,");
   } else {
-    Serial.print(analogRead(54)); //Phidgets "2" - auger sense on APL skid
+    Serial.print(analogRead(ANA1)); //Phidgets "2" - auger sense on APL skid
     Serial.print(", ");
   }
 }
