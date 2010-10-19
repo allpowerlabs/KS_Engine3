@@ -35,13 +35,8 @@ void DoGrate() { // call once per second
       } else { //reset
         grate_val = GRATE_SHAKE_INIT;
       }
-      if (grate_pratio_accumulator < GRATE_PRATIO_THRESHOLD) {
-        grate_motor_state = GRATE_MOTOR_LOW;
-        analogWrite(GRATE_MOTOR,128);
-      } else {
-        grate_motor_state = GRATE_MOTOR_HIGH;
-        analogWrite(GRATE_MOTOR,255);
-      }
+      grate_motor_state = GRATE_MOTOR_LOW;
+      analogWrite(GRATE_MOTOR,255);
     }
     break;
   }
