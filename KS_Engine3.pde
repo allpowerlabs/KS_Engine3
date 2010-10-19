@@ -1,4 +1,4 @@
-// KS_Testing
+// KS_Engine3
 // Library to use as basis for testing
 // Developed for the APL GCU/PCU: http://gekgasifier.pbworks.com/Gasifier-Control-Unit
 
@@ -38,6 +38,7 @@
 #define GRATE_SHAKE_INIT 32000
 
 // FET Mapping
+#define GRATE_MOTOR FET5
 #define ALARM_FET FET6
 
 // Datalogging variables
@@ -45,11 +46,10 @@ int lineCount = 0;
 
 // Grate turning variables
 int grateMode = GRATE_SHAKE_PRATIO; //set default starting state
-int GRATE_MOTOR = FET5; //set FET to drive motor
 int grate_motor_state; //changed to indicate state (for datalogging, etc)
 int grate_val = GRATE_SHAKE_INIT; //variable that is changed and checked
 int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger shaking past threshhold
-int grate_max_interval = 120; //longest total interval in seconds
+int grate_max_interval = 15*60; //longest total interval in seconds
 int grate_min_interval = 15;
 int grate_on_interval = 2;
 //define these in setup, how much to remove from grate_val each cycle [1 second] (slope)
@@ -93,16 +93,16 @@ int hertz = 0;
 double premix_valve_open = 20; //calibrated angle for servo valve open
 double premix_valve_closed = -120; //calibrated angle for servo valve closed
 double premix_valve_range = 50;
-double premix_valve_center = -75;
+double premix_valve_center = -100;
 double lambda_setpoint;
 double lambda_input;
 double lambda_output;
 double lambda_value;
-double lambda_setpoint_mode[3] = {1.0, 1.0, 1.0};
-double lambda_P[1] = {0.6}; //engine on values can be updated from EEPROM
+double lambda_setpoint_mode[1] = {1.0};
+double lambda_P[1] = {0.8}; //engine on values can be updated from EEPROM
 double lambda_I[1] = {1.0};
-double lambda_D[1] = {0};
-PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,0.6,1.0,0);
+double lambda_D[1] = {0.1};
+PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,0.8,1.0,0.1);
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
 boolean lambda_closed_loop = false;
@@ -186,6 +186,7 @@ unsigned int auger_off_alarm_point = 900;
 boolean alarm;
 int LOW_FUEL_TC = 3;
 int alarm_interval = 5; // in seconds
+int pressureRatioAccumulator = 0;
 
 void setup() {
   GCU_Setup(V3,FULLFILL,P777222);
@@ -226,6 +227,13 @@ void setup() {
   Servo_Reset();
   Timer_Reset();
   Timer2_Reset();
+  
+  //setup grate slopes
+  m_grate_low = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_max_interval;
+  m_grate_high = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_min_interval;
+  m_grate_on = GRATE_SHAKE_CROSS/grate_on_interval;
+  Serial.print("#");
+  Serial.println(m_grate_low);
 }
 
 void loop() {
