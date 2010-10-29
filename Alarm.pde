@@ -27,7 +27,7 @@ void DoAlarm() {
       Serial.println("# Auger off too long");
       alarm = true;
     }
-    if (Temp_Data[0] < 830 || Temp_Data[1] < 830) {
+    if (Temp_Data[T_TRED] < 830 || Temp_Data[T_BRED] < 830) {
       Serial.println("# Temperatures too low for running engine");
       alarm = true;
     }
@@ -40,7 +40,7 @@ void DoAlarm() {
 //    Serial.println("# Reactor fuel may be low");
 //    alarm = true;
 //  }
-//  if (Vrmsave > 50 & (Temp_Data[0]<790 || Temp_Data[1]<790)) {
+//  if (Vrmsave > 50 & (Temp_Data[T_TRED]<790 || Temp_Data[T_BRED]<790)) {
 //    Serial.println("# T_tred and/or T_bred below 790°C while engine is running");
 //    alarm = true;
 //  }

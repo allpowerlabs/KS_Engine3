@@ -13,11 +13,11 @@ void DoGrate() { // call once per second
   // handle different shaking modes
   switch (grateMode) {
   case GRATE_SHAKE_ON:
-    analogWrite(GRATE_MOTOR, 255);
+    analogWrite(FET_GRATE, 255);
     grate_motor_state = GRATE_MOTOR_LOW;
     break;
   case GRATE_SHAKE_OFF:
-    analogWrite(GRATE_MOTOR,0);
+    analogWrite(FET_GRATE,0);
     grate_motor_state = GRATE_MOTOR_OFF;
     break;
   case GRATE_SHAKE_PRATIO:
@@ -28,7 +28,7 @@ void DoGrate() { // call once per second
         grate_val -= m_grate_low;
       }
       grate_motor_state = GRATE_MOTOR_OFF;
-      analogWrite(GRATE_MOTOR,0);
+      analogWrite(FET_GRATE,0);
     } else { //time to shake or reset
       if (grate_val >= 0) { //shake
         grate_val -= m_grate_on;
@@ -36,7 +36,7 @@ void DoGrate() { // call once per second
         grate_val = GRATE_SHAKE_INIT;
       }
       grate_motor_state = GRATE_MOTOR_LOW;
-      analogWrite(GRATE_MOTOR,255);
+      analogWrite(FET_GRATE,255);
     }
     break;
   }

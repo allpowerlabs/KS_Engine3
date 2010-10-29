@@ -17,10 +17,39 @@
 #include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
 
 // Analog Input Mapping
-#define ANA_LAMBDA 0
-#define ANA_V 1
-#define ANA_CT_LEG1 2
-#define ANA_CT_LEG2 3
+#define ANA_LAMBDA ANA0
+#define ANA_AUGER ANA1
+#define ANA_SWITCH ANA2
+#define ANA_V NULL
+#define ANA_CT_LEG1 NULL
+#define ANA_CT_LEG2 NULL
+
+// FET Mapping
+#define FET_IGNITION FET7
+#define FET_STARTER FET5
+
+#define FET_GRATE FET6
+
+#define FET_ALARM FET0
+
+//Servo Mapping
+#define SERVO_MIXTURE SERVO0
+#define SERVO_CALIB SERVO1
+
+//Thermocouple Mapping
+#define T_BRED 0
+#define T_TRED 1
+#define T_PYRO_IN 2
+#define T_PYRO_OUT 3
+#define T_COMB NULL
+#define T_REACTOR_GAS_OUT NULL
+#define T_DRYING_GAS_OUT NULL
+#define T_FILTER NULL
+
+//Pressure Mapping
+#define P_REACTOR 0
+#define P_COMB 4
+#define P_FILTER 2
 
 // Grate Shaking States
 #define GRATE_SHAKE_OFF 0
@@ -37,9 +66,15 @@
 #define GRATE_SHAKE_CROSS 5000
 #define GRATE_SHAKE_INIT 32000
 
-// FET Mapping
-#define GRATE_MOTOR FET5
-#define ALARM_FET FET6
+//Control States
+#define CONTROL_OFF 0
+#define CONTROL_START 1
+#define CONTROL_ON 2
+
+//Engine States
+#define ENGINE_OFF 0
+#define ENGINE_ON 1
+#define ENGINE_STARTING 2
 
 // Datalogging variables
 int lineCount = 0;
@@ -75,6 +110,7 @@ double air_rct_flow;
 double gas_eng_flow;
 
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
+//TO DO: move loops to hardware timer and interrupt based control, figure out interrupt prioritization
 int loopPeriod0 = 5000;
 unsigned long nextTime0;
 int loopPeriod1 = 1000;
@@ -83,6 +119,14 @@ int loopPeriod2 = 100;
 unsigned long nextTime2;
 int loopPeriod3 = 10;
 unsigned long nextTime3;
+
+//Control
+int control_state = CONTROL_OFF;
+
+//Engine
+int engine_state = ENGINE_OFF;
+unsigned long engine_end_cranking;
+int engine_crank_period = 10000; //length of time to crank engine before stopping (milliseconds)
 
 //Hertz
 int hertz = 0;
@@ -116,7 +160,6 @@ int P_comb;
 float P_comb_smooth;
 int P_reactor;
 int P_filter;
-
 
 //Servo 
 int servo_alt = 0; //used to pulse every other time through loop (~20 ms)
@@ -262,9 +305,9 @@ void loop() {
         DoDatalogging();
         DoAlarmUpdate();
         if (alarm == true) {
-          analogWrite(ALARM_FET, 255);
+          analogWrite(FET_ALARM, 255);
         } else {
-          analogWrite(ALARM_FET,0);
+          analogWrite(FET_ALARM,0);
         }
         if (millis() >= nextTime0) {
           nextTime0 += loopPeriod0;

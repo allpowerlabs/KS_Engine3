@@ -1,3 +1,49 @@
+void DoEngine() {
+  switch (engine_state) {
+    case ENGINE_OFF:
+      if (control_state == CONTROL_START) {
+        TransitionEngine(ENGINE_STARTING);
+      }
+      break;
+    case ENGINE_ON:
+      if (control_state == CONTROL_OFF) {
+        TransitionEngine(ENGINE_OFF);
+      }
+      if (Press[P_REACTOR] > -500) { //placeholder signal for RPM measurement
+        TransitionEngine(ENGINE_OFF);
+      }
+      break;
+    case ENGINE_STARTING:
+      if (control_state == CONTROL_OFF) {
+        TransitionEngine(ENGINE_OFF);
+      }
+      if (engine_end_cranking < millis()) { //stop cranking engine based on time out
+        TransitionEngine(ENGINE_ON);
+      }
+      //TODO: Detect engine start up and stop cranking when it picks up
+      break;
+  }
+}
+
+void TransitionEngine(int new_state) {
+    switch (engine_state) {
+    case ENGINE_OFF:
+      analogWrite(FET_IGNITION,0);
+      analogWrite(FET_STARTER,0);
+      break;
+    case ENGINE_ON:
+      analogWrite(FET_IGNITION,255);
+      analogWrite(FET_STARTER,0);
+      engine_end_cranking = millis() + engine_crank_period;
+      break;
+    case ENGINE_STARTING:
+      analogWrite(FET_IGNITION,255);
+      analogWrite(FET_STARTER,255);
+      break;
+  }
+}
+
+
 //void CheckEngineState() {
 //  engine_mode_value = ADC_ReadChanSync(ANA_ENGINE_MODE);
 //  // read premix potentiometer, map (linear interpolate) to servo valve open/closed position
