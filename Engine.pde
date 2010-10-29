@@ -26,7 +26,8 @@ void DoEngine() {
 }
 
 void TransitionEngine(int new_state) {
-    switch (engine_state) {
+  //can look at engine_state for "old" state before transitioning at the end of this method
+  switch (new_state) {
     case ENGINE_OFF:
       analogWrite(FET_IGNITION,0);
       analogWrite(FET_STARTER,0);
@@ -41,6 +42,7 @@ void TransitionEngine(int new_state) {
       analogWrite(FET_STARTER,255);
       break;
   }
+  engine_state=new_state;
 }
 
 

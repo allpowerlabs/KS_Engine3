@@ -277,6 +277,7 @@ void setup() {
   m_grate_on = GRATE_SHAKE_CROSS/grate_on_interval;
   Serial.print("#");
   Serial.println(m_grate_low);
+  TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
 }
 
 void loop() {
