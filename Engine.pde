@@ -31,15 +31,18 @@ void TransitionEngine(int new_state) {
     case ENGINE_OFF:
       analogWrite(FET_IGNITION,0);
       analogWrite(FET_STARTER,0);
+      Serial.println("# New Engine State: Off");
       break;
     case ENGINE_ON:
       analogWrite(FET_IGNITION,255);
       analogWrite(FET_STARTER,0);
-      engine_end_cranking = millis() + engine_crank_period;
+      Serial.println("# New Engine State: On");
       break;
     case ENGINE_STARTING:
       analogWrite(FET_IGNITION,255);
       analogWrite(FET_STARTER,255);
+      engine_end_cranking = millis() + engine_crank_period;
+      Serial.println("# New Engine State: Starting");
       break;
   }
   engine_state=new_state;
