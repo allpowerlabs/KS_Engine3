@@ -293,6 +293,8 @@ void loop() {
     //DoFlow();
     DoSerialIn();
     DoLambda();
+    DoControlInputs();
+    DoEngine();
     DoServos();
     if (millis() >= nextTime2) {
       MeasureElectricalPower();
