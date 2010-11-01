@@ -188,13 +188,12 @@ void DoDatalogging() {
   LogTime(header);
   LogTemps(header);
   LogPressures(header);
-  //LogFlows(header);
+  LogAnalogInputs(header);
+  LogFlows(header);
   LogGrate(header);
   LogFilter(header);
-  LogAnalogInputs(header);
   LogPID(header);
-  LogEnergy(header);
+  //LogEnergy(header);
   LogAuger(header);
-  Serial.println();
   lineCount++;
 }
