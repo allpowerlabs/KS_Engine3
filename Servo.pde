@@ -1,5 +1,5 @@
-
 // Servo
+// TO DO: move to hardware timer based output, improve or remove the deadband code, code should be implemented for all 3 servos
 void PulseServo(int servo_pin,double angle) {
   digitalWrite(servo_pin,HIGH);
   delayMicroseconds(1520+angle*6);
