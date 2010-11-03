@@ -17,9 +17,9 @@
 #include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
 
 // Analog Input Mapping
-#define ANA_LAMBDA ANA0
-#define ANA_AUGER ANA1
-#define ANA_SWITCH ANA2
+#define ANA_LAMBDA 0
+#define ANA_AUGER 1
+#define ANA_SWITCH 2
 #define ANA_V NULL
 #define ANA_CT_LEG1 NULL
 #define ANA_CT_LEG2 NULL
@@ -85,7 +85,7 @@ int grate_motor_state; //changed to indicate state (for datalogging, etc)
 int grate_val = GRATE_SHAKE_INIT; //variable that is changed and checked
 int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger shaking past threshhold
 int grate_max_interval = 15*60; //longest total interval in seconds
-int grate_min_interval = 15;
+int grate_min_interval = 60;
 int grate_on_interval = 2;
 //define these in setup, how much to remove from grate_val each cycle [1 second] (slope)
 int m_grate_low; 
@@ -134,19 +134,19 @@ int hertz = 0;
 // Lambda variables
 // Servo Valve Calibration - will vary depending on the servo valve
 //PP #2 (now upgraded to #7)
-double premix_valve_open = 20; //calibrated angle for servo valve open
-double premix_valve_closed = -120; //calibrated angle for servo valve closed
+double premix_valve_open = -130; //calibrated angle for servo valve open
+double premix_valve_closed = -30; //calibrated angle for servo valve closed
 double premix_valve_range = 50;
-double premix_valve_center = -100;
+double premix_valve_center = -60;
 double lambda_setpoint;
 double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.0};
-double lambda_P[1] = {0.8}; //engine on values can be updated from EEPROM
-double lambda_I[1] = {1.0};
-double lambda_D[1] = {0.1};
-PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,0.8,1.0,0.1);
+double lambda_P[1] = {0.2}; //engine on values can be updated from EEPROM
+double lambda_I[1] = {0.8};
+double lambda_D[1] = {0.0};
+PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[1],lambda_I[1],lambda_D[1]);
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
 boolean lambda_closed_loop = false;
