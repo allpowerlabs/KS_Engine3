@@ -80,6 +80,10 @@
 #define ENGINE_ON 1
 #define ENGINE_STARTING 2
 
+//Lambda States
+#define LAMBDA_CLOSEDLOOP 0
+#define LAMBDA_SEALED 1
+
 // Datalogging variables
 int lineCount = 0;
 
@@ -132,22 +136,24 @@ volatile int hertz_period;
 // Lambda variables
 // Servo Valve Calibration - will vary depending on the servo valve
 //PP #2 (now upgraded to #7)
-double premix_valve_open = -130; //calibrated angle for servo valve open
-double premix_valve_closed = -30; //calibrated angle for servo valve closed
+//TO DO: Move to % based on open/closed instead of degrees
+double premix_valve_open = 120; //calibrated angle for servo valve open
+double premix_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
 double premix_valve_range = 50;
-double premix_valve_center = -60;
+double premix_valve_center = 0.1*(premix_valve_open-premix_valve_closed)+premix_valve_closed;
 double lambda_setpoint;
 double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.0};
-double lambda_P[1] = {0.2}; //engine on values can be updated from EEPROM
-double lambda_I[1] = {0.8};
-double lambda_D[1] = {0.0};
-PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[1],lambda_I[1],lambda_D[1]);
+double lambda_P[1] = {0.5}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double lambda_I[1] = {0.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double lambda_D[1] = {0.0}; //Unless you know what it's for, don't use D
+PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambda_I[0],lambda_D[0]);
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
 boolean lambda_closed_loop = false;
+int lambda_state;
 
 // Pressure variables
 int Press_Calib[6];
@@ -250,8 +256,7 @@ void setup() {
   nextTime1 = millis() + loopPeriod1;
   nextTime2 = millis() + loopPeriod2;
   nextTime3 = millis() + loopPeriod3;
-
-  Lambda_Init(); // params should be pulled out to here
+  
   LoadPressureSensorCalibration();
   //LoadLambda(); - must save lambda data first?
   Serial.begin(57600);
@@ -285,6 +290,7 @@ void setup() {
   Serial.print("#");
   Serial.println(m_grate_low);
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
+  TransitionLambda(LAMBDA_CLOSEDLOOP);
   InitPeriodHertz(); //attach interrupt
   
 }
