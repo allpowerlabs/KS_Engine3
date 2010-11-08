@@ -9,15 +9,25 @@ void LogTime(boolean header = false) {
 }
 
 void LogFlows(boolean header = false) {
-  if (header) {
-    Serial.print("Q_air_eng,Q_air_rct,Q_gas_eng,");
-  } else {
-    Serial.print(air_eng_flow);
-    Serial.print(", ");
-    Serial.print(air_rct_flow);
-    Serial.print(", ");
-    Serial.print(gas_eng_flow);
-    Serial.print(", ");
+  if (flow_active) {
+    if (header) {
+      if (P_Q_AIR_ENG != NULL) { Serial.print("Q_air_eng,"); }
+      if (P_Q_AIR_RCT != NULL) { Serial.print("Q_air_rct,"); }
+      if (P_Q_GAS_ENG != NULL) { Serial.print("Q_gas_eng,"); }
+    } else {
+      if (P_Q_AIR_ENG != NULL) {
+        Serial.print(air_eng_flow);
+        Serial.print(", ");
+      }
+      if (P_Q_AIR_RCT != NULL) {
+        Serial.print(air_rct_flow);
+        Serial.print(", ");
+      }
+      if (P_Q_GAS_ENG != NULL) {
+        Serial.print(gas_eng_flow);
+        Serial.print(", ");
+      }
+    }
   }
 }
 

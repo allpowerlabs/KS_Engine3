@@ -50,6 +50,10 @@
 #define P_REACTOR 0
 #define P_COMB 4
 #define P_FILTER 2
+#define P_FILTER 1
+#define P_Q_AIR_ENG 5
+#define P_Q_AIR_RCT NULL
+#define P_Q_GAS_ENG NULL
 
 // Grate Shaking States
 #define GRATE_SHAKE_OFF 0
@@ -100,14 +104,6 @@ boolean pRatioReactorHigh;
 float pRatioFilter;
 boolean pRatioFilterHigh;
 int filter_pratio_accumulator;
-
-// Flow variables
-float CfA0_air_rct =0.42123;
-float CfA0_air_eng = 0.6555;
-float CfA0_gas_eng = 0.81046;
-double air_eng_flow;
-double air_rct_flow;
-double gas_eng_flow;
 
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
 //TO DO: move loops to hardware timer and interrupt based control, figure out interrupt prioritization
@@ -160,6 +156,15 @@ int P_comb;
 float P_comb_smooth;
 int P_reactor;
 int P_filter;
+
+// Flow variables
+float CfA0_air_rct =0.42123;
+float CfA0_air_eng = 0.6555;
+float CfA0_gas_eng = 0.81046;
+double air_eng_flow;
+double air_rct_flow;
+double gas_eng_flow;
+boolean flow_active; // are any flowmeters hooked up?
 
 //Servo 
 int servo_alt = 0; //used to pulse every other time through loop (~20 ms)
@@ -290,7 +295,7 @@ void loop() {
     Timer_ReadAll(); // reads pulse timer into Timer_Data, in RPM ??? XXX
     UpdateCalibratedPressure();
     DoPressure();
-    //DoFlow();
+    DoFlow();
     DoSerialIn();
     DoLambda();
     DoControlInputs();
