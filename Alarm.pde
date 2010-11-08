@@ -27,7 +27,7 @@ void DoAlarm() {
       Serial.println("# Auger off too long");
       alarm = true;
     }
-    if (Temp_Data[T_TRED] < 830 || Temp_Data[T_BRED] < 830) {
+    if (Temp_Data[T_TRED] < 800 || Temp_Data[T_BRED] < 800) {
       Serial.println("# Temperatures too low for running engine");
       alarm = true;
     }
