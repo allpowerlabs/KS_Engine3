@@ -9,7 +9,7 @@ void DoEngine() {
       if (control_state == CONTROL_OFF) {
         TransitionEngine(ENGINE_OFF);
       }
-      if (Press[P_REACTOR] > -100) { //placeholder signal for RPM measurement
+      if (CalculatePeriodHertz() < 40) { // Engine is not on
         TransitionEngine(ENGINE_OFF);
       }
       break;
@@ -17,16 +17,20 @@ void DoEngine() {
       if (control_state == CONTROL_OFF) {
         TransitionEngine(ENGINE_OFF);
       }
-      if (control_state == CONTROL_ON) {
-        TransitionEngine(ENGINE_ON);
+      if (true) {
+        // Use RPM detection to stop cranking automatically
+        if (CalculatePeriodHertz() > 40) { //if engine is caught, stop cranking
+          TransitionEngine(ENGINE_ON);
+        }
+        if (engine_end_cranking < millis()) { //if engine still has not caught, stop cranking
+          TransitionEngine(ENGINE_OFF);
+        }
+      } else {
+        // Use starter button in the standard manual control configuration (push button to start, release to stop cranking)
+        if (control_state == CONTROL_ON) {
+          TransitionEngine(ENGINE_ON);
+        }
       }
-      //if (engine_end_cranking < millis()) { //stop cranking engine based on time out
-      //  TransitionEngine(ENGINE_ON);
-      //}
-      //if (Press[P_REACTOR] < -100) {
-      //  TransitionEngine(ENGINE_ON);
-      //}
-      //TODO: Detect engine start up and stop cranking when it picks up
       break;
   }
 }

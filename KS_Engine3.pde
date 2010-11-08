@@ -125,7 +125,9 @@ unsigned long engine_end_cranking;
 int engine_crank_period = 10000; //length of time to crank engine before stopping (milliseconds)
 
 //Hertz
-int hertz = 0;
+double hertz = 0;
+volatile unsigned long hertz_last_interrupt;
+volatile int hertz_period;
 
 // Lambda variables
 // Servo Valve Calibration - will vary depending on the servo valve
@@ -283,6 +285,8 @@ void setup() {
   Serial.print("#");
   Serial.println(m_grate_low);
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
+  InitPeriodHertz(); //attach interrupt
+  
 }
 
 void loop() {
