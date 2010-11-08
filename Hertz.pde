@@ -1,3 +1,21 @@
+//
+void InitPeriodHertz() {
+  attachInterrupt(5,DoPeriodHertz,RISING); //Interrupt #5 - Arduino Pin 18 = PD5
+}
+
+void DoPeriodHertz() {
+  hertz_period = micros() - hertz_last_interrupt;
+  hertz_last_interrupt = micros();
+}
+
+double CalculatePeriodHertz() {
+    if (micros() - hertz_last_interrupt < 50000) { // if period is longer than 50k µs, Hz is less than 20 Hz or getting no signal
+      return 1.0/(hertz_period/1000000.0); //frequency = 1/period in seconds (hertz_period is in microseconds)
+    } else {
+      return 0;  // less than 20 Hz or no signal, so print 0
+    }
+}
+
 //Timer Code (Hertz Measurement)
 void DoHertz() {
   hertz = int(Timer2_Read());

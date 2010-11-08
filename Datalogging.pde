@@ -179,6 +179,16 @@ void LogEnergy(boolean header = false) {
   }
 }
 
+void LogHertz(boolean header = false) {
+  if (header) {
+    Serial.print("Hz");
+    Serial.print(", ");  
+  } else {
+    Serial.print(CalculatePeriodHertz());
+    Serial.print(", ");  
+  }
+}
+
 void DoDatalogging() {
   boolean header = false;
   Serial.begin(57600); //reset serial?
@@ -195,5 +205,7 @@ void DoDatalogging() {
   LogPID(header);
   //LogEnergy(header);
   LogAuger(header);
+  LogHertz(header);
+  Serial.println();
   lineCount++;
 }
