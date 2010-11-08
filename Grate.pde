@@ -1,5 +1,5 @@
 void DoGrate() { // call once per second
-  pRatioReactor = (float)P_comb/(float)P_reactor;
+  pRatioReactor = (float)Press[P_COMB]/(float)Press[P_REACTOR];
   pRatioReactorHigh = (pRatioReactor < 0.3 && P_reactor < -200 && P_comb < -50);
   
   // if pressure ratio is "high" for a long time, shake harder
