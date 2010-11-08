@@ -1,3 +1,10 @@
+void InitGrate() {
+  //setup grate slopes
+  m_grate_low = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_max_interval;
+  m_grate_high = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_min_interval;
+  m_grate_on = GRATE_SHAKE_CROSS/grate_on_interval;
+}
+
 void DoGrate() { // call once per second
   pRatioReactor = (float)Press[P_COMB]/(float)Press[P_REACTOR];
   pRatioReactorHigh = (pRatioReactor < 0.3 && P_reactor < -200 && P_comb < -50);

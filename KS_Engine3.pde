@@ -285,10 +285,8 @@ void setup() {
   Timer_Reset();
   Timer2_Reset();
   
-  //setup grate slopes
-  m_grate_low = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_max_interval;
-  m_grate_high = (GRATE_SHAKE_INIT-GRATE_SHAKE_CROSS)/grate_min_interval;
-  m_grate_on = GRATE_SHAKE_CROSS/grate_on_interval;
+  InitGrate();
+  
   Serial.print("#");
   Serial.println(m_grate_low);
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
