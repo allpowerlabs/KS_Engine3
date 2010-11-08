@@ -86,6 +86,7 @@
 //Lambda States
 #define LAMBDA_CLOSEDLOOP 0
 #define LAMBDA_SEALED 1
+#define LAMBDA_STEPTEST 2
 
 // Datalogging variables
 int lineCount = 0;
@@ -156,7 +157,9 @@ PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambd
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
 boolean lambda_closed_loop = false;
+String lambda_state_name;
 int lambda_state;
+unsigned long lambda_state_entered;
 
 // Pressure variables
 int Press_Calib[6];
@@ -236,6 +239,9 @@ bool lastVCross, checkVCross;
 int crossCount;
 unsigned long start,tlength;
 double frequency;
+
+//Serial
+char serial_last_input;
 
 // Alarm
 int auger_on_length = 0;

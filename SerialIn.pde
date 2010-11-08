@@ -10,7 +10,8 @@ void DoSerialIn() {
     p=lambda_P[0];
     i=lambda_I[0];
     d=lambda_D[0];
-    switch (Serial.read()) {
+    serial_last_input = Serial.read();
+    switch (serial_last_input) {
     case 'p':
       PrintLambdaUpdate(p,i,d,p+p_d,i,d);
       p=p+p_d;
