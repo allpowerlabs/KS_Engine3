@@ -49,7 +49,6 @@
 //Pressure Mapping
 #define P_REACTOR 0
 #define P_COMB 4
-#define P_FILTER 2
 #define P_FILTER 1
 #define P_Q_AIR_ENG 5
 #define P_Q_AIR_RCT NULL
@@ -303,7 +302,6 @@ void loop() {
     Temp_ReadAll();  // reads into array Temp_Data[], in deg C
     Press_ReadAll(); // reads into array Press_Data[], in hPa
     Timer_ReadAll(); // reads pulse timer into Timer_Data, in RPM ??? XXX
-    UpdateCalibratedPressure();
     DoPressure();
     DoFlow();
     DoSerialIn();

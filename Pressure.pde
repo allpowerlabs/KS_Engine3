@@ -1,10 +1,10 @@
 // Pressure
 
 void DoPressure() {
+  UpdateCalibratedPressure();
   P_reactor = Press[0];
   P_comb = Press[1];
   P_filter = Press[2];
-  
   //P_comb_smooth = smooth(P_comb,0.999,P_comb_smooth);
 }
 
