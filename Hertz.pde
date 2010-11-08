@@ -1,6 +1,6 @@
 //
 void InitPeriodHertz() {
-  attachInterrupt(5,DoPeriodHertz,RISING); //Interrupt #5 - Arduino Pin 18 = PD5
+  attachInterrupt(INT_HERTZ,DoPeriodHertz,RISING); //Interrupt #5 - Arduino Pin 18 = PD5
 }
 
 void DoPeriodHertz() {

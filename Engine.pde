@@ -17,7 +17,7 @@ void DoEngine() {
       if (control_state == CONTROL_OFF) {
         TransitionEngine(ENGINE_OFF);
       }
-      if (true) {
+      #ifdef INT_HERTZ
         // Use RPM detection to stop cranking automatically
         if (CalculatePeriodHertz() > 40) { //if engine is caught, stop cranking
           TransitionEngine(ENGINE_ON);
@@ -25,12 +25,12 @@ void DoEngine() {
         if (engine_end_cranking < millis()) { //if engine still has not caught, stop cranking
           TransitionEngine(ENGINE_OFF);
         }
-      } else {
+      #else
         // Use starter button in the standard manual control configuration (push button to start, release to stop cranking)
         if (control_state == CONTROL_ON) {
           TransitionEngine(ENGINE_ON);
         }
-      }
+      #endif
       break;
   }
 }

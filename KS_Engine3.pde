@@ -55,6 +55,9 @@
 #define P_Q_AIR_RCT NULL
 #define P_Q_GAS_ENG NULL
 
+//Interrupt Mapping
+#define INT_HERTZ 5 //interrupt number (not pin number)
+
 // Grate Shaking States
 #define GRATE_SHAKE_OFF 0
 #define GRATE_SHAKE_ON 1
