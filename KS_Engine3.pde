@@ -36,7 +36,7 @@
 #define SERVO_MIXTURE SERVO0
 #define SERVO_CALIB SERVO1
 
-//Thermocouple Mapping
+//Thermocouple Mappings
 #define T_BRED 0
 #define T_TRED 1
 #define T_PYRO_IN 2
@@ -45,6 +45,7 @@
 #define T_REACTOR_GAS_OUT NULL
 #define T_DRYING_GAS_OUT NULL
 #define T_FILTER NULL
+#define T_LOW_FUEL NULL
 
 //Pressure Mapping
 #define P_REACTOR 0
@@ -239,7 +240,6 @@ int auger_off_length = 0;
 unsigned int auger_on_alarm_point = 300;
 unsigned int auger_off_alarm_point = 900;
 boolean alarm;
-int LOW_FUEL_TC = 3;
 int alarm_interval = 5; // in seconds
 int pressureRatioAccumulator = 0;
 
