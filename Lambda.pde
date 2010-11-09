@@ -3,11 +3,10 @@
 void DoLambda() {
     switch(lambda_state) {
       case LAMBDA_CLOSEDLOOP:
-        lambda_input = ADC_ReadChanSync(ANA_LAMBDA)/1024.0+0.5; //0-5V = 0.5 - 1.5 L;
+        lambda_input = GetLambda();
         lambda_PID.SetTunings(lambda_P[0], lambda_I[0], lambda_D[0]);
         lambda_PID.Compute();
-        servo0_pos = lambda_output;
-        
+        SetPremixServoAngle(lambda_output);
         if (engine_state == ENGINE_OFF) {
           TransitionLambda(LAMBDA_SEALED);
         }
@@ -17,16 +16,16 @@ void DoLambda() {
         }
         break;
       case LAMBDA_SEALED:
-        lambda_input = ADC_ReadChanSync(ANA_LAMBDA)/1024.0+0.5; //0-5V = 0.5 - 1.5 L;
+        lambda_input = GetLambda();
         if (engine_state == ENGINE_STARTING) {
           TransitionLambda(LAMBDA_CLOSEDLOOP);
         }
         break;
       case LAMBDA_STEPTEST: //used for PID tuning
         if (millis()-lambda_state_entered % 5000 <= 1) { //change output every 5 seconds
-          lambda_output = lambda_PID.GetOUTMin()+(random(0,5)/10.0)*(lambda_PID.GetOUTMax()-lambda_PID.GetOUTMin()); //steps in random 10% increments of control output limits
+          lambda_output = (random(0,10)/10.0)*(lambda_PID.GetOUTMax()-lambda_PID.GetOUTMin()); //steps in random 10% increments of control output limits
         }
-        if (millis()-lambda_state_entered > 120000 || serial_last_input == 'o') {
+        if (millis()-lambda_state_entered > 60000 || serial_last_input == 'o') { //one minute of step testing is over
           TransitionLambda(LAMBDA_CLOSEDLOOP);
           serial_last_input == '';
         }
@@ -58,13 +57,12 @@ void TransitionLambda(int new_state) {
       lambda_PID.SetMode(AUTO);
       lambda_PID.SetSampleTime(20);
       lambda_PID.SetInputLimits(0.5,1.5);
-      lambda_PID.SetOutputLimits(max(float(premix_valve_center-(premix_valve_range/2.0)),premix_valve_closed),min(float(premix_valve_center+(premix_valve_range/2.0)),premix_valve_open));
-      lambda_output = premix_valve_center;
+      lambda_PID.SetOutputLimits(premix_valve_min,premix_valve_max);
+      SetPremixServoAngle(premix_valve_center);
       break;
     case LAMBDA_SEALED:
       lambda_state_name = "Sealed";
-      lambda_output = premix_valve_closed;
-      servo0_pos = lambda_output;
+      SetPremixServoAngle(premix_valve_closed);
       lambda_PID.SetMode(MANUAL);
       break;
     case LAMBDA_STEPTEST:
@@ -83,6 +81,14 @@ void TransitionLambda(int new_state) {
     //  write_lambda = false;
     //  Serial.print("Lambda PID values saved");
     //}
+    
+double GetLambda() {
+  return ADC_ReadChanSync(ANA_LAMBDA)/1024.0+0.5; //0-5V = 0.5 - 1.5 L;
+}
+
+void SetPremixServoAngle(double percent) {
+ servo0_pos = premix_valve_closed + percent*(premix_valve_open-premix_valve_closed);
+}
 
 void WriteLambda() {
   //0-8 for P_calib

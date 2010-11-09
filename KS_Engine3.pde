@@ -143,8 +143,9 @@ volatile int hertz_period;
 //TO DO: Move to % based on open/closed instead of degrees
 double premix_valve_open = 120; //calibrated angle for servo valve open
 double premix_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
-double premix_valve_range = 50;
-double premix_valve_center = 0.1*(premix_valve_open-premix_valve_closed)+premix_valve_closed;
+double premix_valve_max = 0.50;  //minimum of range for closed loop operation (percent open)
+double premix_valve_min = 0.00; //maximum of range for closed loop operation (percent open)
+double premix_valve_center = 0.00; //initial value when entering closed loop operation (percent open)
 double lambda_setpoint;
 double lambda_input;
 double lambda_output;
@@ -241,7 +242,7 @@ unsigned long start,tlength;
 double frequency;
 
 //Serial
-char serial_last_input;
+char serial_last_input = '';
 
 // Alarm
 int auger_on_length = 0;
