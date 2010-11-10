@@ -152,7 +152,7 @@ double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.0};
 double lambda_P[1] = {0.5}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
-double lambda_I[1] = {0.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double lambda_I[1] = {0.3}; //Make I_Param about the same as your manual response time (in Seconds)/4 
 double lambda_D[1] = {0.0}; //Unless you know what it's for, don't use D
 PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambda_I[0],lambda_D[0]);
 unsigned long lamba_updated_time;
