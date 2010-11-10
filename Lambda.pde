@@ -12,7 +12,7 @@ void DoLambda() {
         }
         if (serial_last_input == 'o') {
           TransitionLambda(LAMBDA_STEPTEST);
-          serial_last_input == '';
+          serial_last_input = '\0';
         }
         break;
       case LAMBDA_SEALED:
@@ -27,7 +27,7 @@ void DoLambda() {
         }
         if (millis()-lambda_state_entered > 60000 || serial_last_input == 'o') { //one minute of step testing is over
           TransitionLambda(LAMBDA_CLOSEDLOOP);
-          serial_last_input == '';
+          serial_last_input == '\0';
         }
         break;
      }

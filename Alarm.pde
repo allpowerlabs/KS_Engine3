@@ -18,7 +18,7 @@ void DoAlarmUpdate() {
 
 void DoAlarm() {
   alarm = false;
-  if (P_reactor < -500 || engine_state == ENGINE_ON) { //alarm only if reactor is running
+  if (P_reactor < -500) { //alarm only if reactor is running
     if (auger_on_length >= auger_on_alarm_point) {
       Serial.println("# Auger on too long");
       alarm = true;
@@ -27,17 +27,19 @@ void DoAlarm() {
       Serial.println("# Auger off too long");
       alarm = true;
     }
-    if (Temp_Data[T_TRED] < 800 || Temp_Data[T_BRED] < 800) {
-      Serial.println("# Temperatures too low for running engine");
-      alarm = true;
-    }
-  }
-  if (pressureRatioAccumulator > 300) {
+    if (pressureRatioAccumulator > 300) {
       Serial.println("# Pressure Ratio is bad");
       alarm = true;
+    }
+    #ifdef T_LOW_FUEL
+    if (Temp_Data[T_LOW_FUEL] > 230) {
+      Serial.println("# Reactor fuel may be low");
+      alarm = true;
+    }
+    #endif
   }
-  if (Temp_Data[T_LOW_FUEL] > 230) {
-    Serial.println("# Reactor fuel may be low");
-    alarm = true;
+  if ((Temp_Data[T_TRED] < 800 || Temp_Data[T_BRED] < 800) && engine_state == ENGINE_ON) {
+      Serial.println("# Temperatures too low for running engine");
+      alarm = true;
   }
 }

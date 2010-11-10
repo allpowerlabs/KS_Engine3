@@ -45,7 +45,7 @@
 #define T_REACTOR_GAS_OUT NULL
 #define T_DRYING_GAS_OUT NULL
 #define T_FILTER NULL
-#define T_LOW_FUEL NULL
+//#define T_LOW_FUEL NULL
 
 //Pressure Mapping
 #define P_REACTOR 0
@@ -242,7 +242,7 @@ unsigned long start,tlength;
 double frequency;
 
 //Serial
-char serial_last_input = '';
+char serial_last_input = '\0'; // \0 is the NULL character
 
 // Alarm
 int auger_on_length = 0;
