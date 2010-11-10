@@ -88,6 +88,11 @@
 #define LAMBDA_SEALED 1
 #define LAMBDA_STEPTEST 2
 
+//Display States
+#define DISPLAY_SPLASH 0
+#define DISPLAY_REACTOR 1
+#define DISPLAY_ENGINE 2
+
 // Datalogging variables
 int lineCount = 0;
 
@@ -131,6 +136,10 @@ int control_state = CONTROL_OFF;
 int engine_state = ENGINE_OFF;
 unsigned long engine_end_cranking;
 int engine_crank_period = 10000; //length of time to crank engine before stopping (milliseconds)
+
+//Display 
+int display_state = DISPLAY_SPLASH;
+unsigned long display_state_entered;
 
 //Hertz
 double hertz = 0;
@@ -293,12 +302,13 @@ void setup() {
   Timer2_Reset();
   
   InitGrate();
+  InitPeriodHertz(); //attach interrupt
   
   Serial.print("#");
   Serial.println(m_grate_low);
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
   TransitionLambda(LAMBDA_CLOSEDLOOP);
-  InitPeriodHertz(); //attach interrupt
+  TransitionDisplay(DISPLAY_SPLASH);
   
 }
 
@@ -340,7 +350,7 @@ void loop() {
       }
     }
     // END USER CONTROL CODE
-    UI_DoScr();       // output the display screen data, 
+    //UI_DoScr();       // output the display screen data, 
     // (default User Interface functions are in library KS/ui.c)
     // XXX should be migrated out of library layer, up to sketch layer                      
      key = Kpd_GetKeyAsync();
