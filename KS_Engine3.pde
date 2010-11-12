@@ -87,6 +87,7 @@
 #define LAMBDA_CLOSEDLOOP 0
 #define LAMBDA_SEALED 1
 #define LAMBDA_STEPTEST 2
+#define LAMBDA_SPSTEPTEST 3
 
 //Display States
 #define DISPLAY_SPLASH 0
@@ -160,13 +161,12 @@ double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.0};
-double lambda_P[1] = {0.5}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
-double lambda_I[1] = {0.3}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double lambda_P[1] = {0.1}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double lambda_I[1] = {0.16}; //Make I_Param about the same as your manual response time (in Seconds)/4 
 double lambda_D[1] = {0.0}; //Unless you know what it's for, don't use D
 PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambda_I[0],lambda_D[0]);
 unsigned long lamba_updated_time;
 boolean write_lambda = false;
-boolean lambda_closed_loop = false;
 String lambda_state_name;
 int lambda_state;
 unsigned long lambda_state_entered;

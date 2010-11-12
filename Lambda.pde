@@ -14,21 +14,48 @@ void DoLambda() {
           TransitionLambda(LAMBDA_STEPTEST);
           serial_last_input = '\0';
         }
+        if (serial_last_input == 'O') {
+          TransitionLambda(LAMBDA_SPSTEPTEST);
+          serial_last_input = '\0';
+        }
         break;
       case LAMBDA_SEALED:
         lambda_input = GetLambda();
         if (engine_state == ENGINE_STARTING) {
           TransitionLambda(LAMBDA_CLOSEDLOOP);
         }
+        if (serial_last_input == 'o') {
+          TransitionLambda(LAMBDA_STEPTEST);
+          serial_last_input = '\0';
+        }
+        if (serial_last_input == 'O') {
+          TransitionLambda(LAMBDA_SPSTEPTEST);
+          serial_last_input = '\0';
+        }
         break;
       case LAMBDA_STEPTEST: //used for PID tuning
-        if (millis()-lambda_state_entered % 5000 <= 1) { //change output every 5 seconds
-          lambda_output = (random(0,10)/10.0)*(lambda_PID.GetOUTMax()-lambda_PID.GetOUTMin()); //steps in random 10% increments of control output limits
+        if (millis()-lambda_state_entered > 15000) { //change output every 5 seconds
+          TransitionLambda(LAMBDA_STEPTEST);
         }
-        if (millis()-lambda_state_entered > 60000 || serial_last_input == 'o') { //one minute of step testing is over
+        if (serial_last_input == 'o') {
           TransitionLambda(LAMBDA_CLOSEDLOOP);
-          serial_last_input == '\0';
+          serial_last_input = '\0';
         }
+        SetPremixServoAngle(lambda_output);
+        break;
+      case LAMBDA_SPSTEPTEST:
+        lambda_input = GetLambda();
+        lambda_PID.SetTunings(lambda_P[0], lambda_I[0], lambda_D[0]);
+        lambda_PID.Compute();
+        SetPremixServoAngle(lambda_output);
+        if (millis()-lambda_state_entered > 15000) { //change output every 5 seconds
+          TransitionLambda(LAMBDA_SPSTEPTEST);
+        }
+        if (serial_last_input == 'o') {
+          TransitionLambda(LAMBDA_CLOSEDLOOP);
+          serial_last_input = '\0';
+        }
+        SetPremixServoAngle(lambda_output);
         break;
      }
 }
@@ -41,10 +68,13 @@ void TransitionLambda(int new_state) {
     case LAMBDA_SEALED:
       break;
     case LAMBDA_STEPTEST:
-      loopPeriod1 = loopPeriod1*10; //return to normal datalogging rate
+      loopPeriod1 = loopPeriod1*4; //return to normal datalogging rate
       break;
+     case LAMBDA_SPSTEPTEST: 
+       loopPeriod1 = loopPeriod1*4; //return to normal datalogging rate
+       break;
   }
-  Serial.print("Lambda switching from ");
+  Serial.print("#Lambda switching from ");
   Serial.print(lambda_state_name);
   
   //Enter
@@ -67,8 +97,15 @@ void TransitionLambda(int new_state) {
       break;
     case LAMBDA_STEPTEST:
       lambda_state_name = "Step Test";
-      lambda_PID.SetMode(MANUAL);
-      loopPeriod1 = loopPeriod1/10; //fast datalogging
+      lambda_PID.SetMode(AUTO);
+      lambda_output = (random(2,4)/10.0)*(lambda_PID.GetOUTMax()-lambda_PID.GetOUTMin()); //steps in random 10% increments of control output limits
+      loopPeriod1 = loopPeriod1/4; //fast datalogging
+      break;
+    case LAMBDA_SPSTEPTEST:
+      lambda_state_name = "Setpoint Step Test";
+      lambda_PID.SetMode(AUTO);
+      lambda_setpoint = random(8,12)/10.0; //steps in random 10% increments of control output limits
+      loopPeriod1 = loopPeriod1/4; //fast datalogging
       break;
   }
   Serial.print(" to ");
