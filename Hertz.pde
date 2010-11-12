@@ -9,11 +9,11 @@ void DoPeriodHertz() {
 }
 
 double CalculatePeriodHertz() {
-    //if (micros() - hertz_last_interrupt < 50000) { // if period is longer than 50k µs, Hz is less than 20 Hz or getting no signal
+    if (micros() - hertz_last_interrupt < 500000) { // if period is longer than 500k µs, Hz is less than 2 Hz or getting no signal
       return 1.0/(hertz_period/1000000.0); //frequency = 1/period in seconds (hertz_period is in microseconds)
-    //} else {
-    //  return 0;  // less than 20 Hz or no signal, so print 0
-    //}
+    } else {
+      return 0;  // less than 2 Hz or no signal, so print 0
+    }
 }
 
 //Timer Code (Hertz Measurement)

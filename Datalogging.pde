@@ -191,8 +191,7 @@ void LogEnergy(boolean header = false) {
 
 void LogHertz(boolean header = false) {
   if (header) {
-    Serial.print("Hz");
-    Serial.print(", ");  
+    Serial.print("Hz, ");
   } else {
     Serial.print(CalculatePeriodHertz());
     Serial.print(", ");  
