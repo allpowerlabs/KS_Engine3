@@ -190,12 +190,6 @@ PID governor_PID(&governor_input, &governor_output, &governor_setpoint,governor_
 // Pressure variables
 int Press_Calib[6];
 int Press[6]; //values corrected for sensor offset (calibration)
-int P_air_in;
-int P_gas_out;
-int P_comb;
-float P_comb_smooth;
-int P_reactor;
-int P_filter;
 
 // Flow variables
 float CfA0_air_rct =0.42123;

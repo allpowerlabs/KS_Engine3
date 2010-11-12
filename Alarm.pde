@@ -23,7 +23,7 @@ void DoAlarmUpdate() {
 
 void DoAlarm() {
   alarm = false;
-  if (P_reactor < -500) { //alarm only if reactor is running
+  if (Press[P_REACTOR] < -500) { //alarm only if reactor is running
     if (auger_on_length >= auger_on_alarm_point) {
       Serial.println("# Auger on too long");
       alarm = true;
