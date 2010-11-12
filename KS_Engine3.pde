@@ -254,6 +254,7 @@ double frequency;
 char serial_last_input = '\0'; // \0 is the NULL character
 
 // Alarm
+boolean auger_on =false;
 int auger_on_length = 0;
 int auger_off_length = 0;
 unsigned int auger_on_alarm_point = 300;

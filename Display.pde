@@ -29,6 +29,12 @@ void DoDisplay() {
       sprintf(buf, "Preac %3ld  ", Press_Data[P_REACTOR] / 25);
       Disp_PutStr(buf);
       sprintf(buf, "Pcomb %3ld", Press_Data[P_COMB] / 25);
+      Disp_RC(3,0);
+      if (auger_on) {
+        sprintf(buf, "Aug On%3i  ", auger_on_length);
+      } else {  
+        sprintf(buf, "AugOff%3i  ", auger_off_length);                                                                                                                                                                                                                                                                                                                                                                                                                           
+      }
       Disp_PutStr(buf);
       break;
     case DISPLAY_ENGINE:
