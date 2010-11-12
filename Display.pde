@@ -12,7 +12,7 @@ void DoDisplay() {
 	Disp_RC(2,0);
 	Disp_PutStr("    (C) APL 2010    ");
 	Disp_RC(3,0);
-	Disp_PutStr("NEXT            HELP");
+	Disp_PutStr("                    ");
 	Disp_CursOff();
         if (millis()-display_state_entered>2000) {
           TransitionDisplay(DISPLAY_REACTOR);
@@ -21,20 +21,35 @@ void DoDisplay() {
     case DISPLAY_REACTOR:
       char buf[20];
       Disp_RC(0, 0);
-      sprintf(buf, "Ttred %3ld  ", Temp_Data[T_TRED]);
+      sprintf(buf, "Ttred%4ld  ", Temp_Data[T_TRED]);
       Disp_PutStr(buf);
-      sprintf(buf, "Tbred %3ld", Temp_Data[T_BRED]);
+      sprintf(buf, "Pcomb%4ld", Press_Data[P_COMB] / 25);
       Disp_PutStr(buf);
+      
       Disp_RC(1, 0);
-      sprintf(buf, "Preac %3ld  ", Press_Data[P_REACTOR] / 25);
+      sprintf(buf, "Tbred%4ld  ", Temp_Data[T_BRED]);
       Disp_PutStr(buf);
-      sprintf(buf, "Pcomb %3ld", Press_Data[P_COMB] / 25);
+      sprintf(buf, "Preac%4ld", Press_Data[P_REACTOR] / 25);
+      Disp_PutStr(buf);
+      
+      Disp_RC(2,0);
+      if (Press_Data[P_REACTOR] < -500) {
+        sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
+        Disp_PutStr(buf);
+      } else {
+        Disp_PutStr("Prati  --  ");
+      }
+      sprintf(buf, "Pfilt%4ld", Press_Data[P_FILTER] / 25);
+      Disp_PutStr(buf);
+      
       Disp_RC(3,0);
       if (auger_on) {
         sprintf(buf, "Aug On%3i  ", auger_on_length);
       } else {  
         sprintf(buf, "AugOff%3i  ", auger_off_length);                                                                                                                                                                                                                                                                                                                                                                                                                           
       }
+      Disp_PutStr(buf);
+      sprintf(buf, "Hz   %4i", int(CalculatePeriodHertz()));
       Disp_PutStr(buf);
       break;
     case DISPLAY_ENGINE:

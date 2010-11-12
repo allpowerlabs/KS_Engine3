@@ -321,6 +321,7 @@ void loop() {
     Temp_ReadAll();  // reads into array Temp_Data[], in deg C
     Press_ReadAll(); // reads into array Press_Data[], in hPa
     Timer_ReadAll(); // reads pulse timer into Timer_Data, in RPM ??? XXX
+    DoDisplay();
     DoPressure();
     DoFlow();
     DoSerialIn();
