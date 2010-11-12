@@ -199,6 +199,17 @@ void LogHertz(boolean header = false) {
   }
 }
 
+void LogGovernor(boolean header=false) {
+    if (header) {
+      Serial.print("ThrottlePercent,ThrottleAngle,");
+    } else {
+      Serial.print(governor_output);
+      Serial.print(", ");
+      Serial.print(servo2_pos);
+      Serial.print(", ");  
+    }
+}
+
 void DoDatalogging() {
   boolean header = false;
   Serial.begin(57600); //reset serial?
@@ -216,6 +227,7 @@ void DoDatalogging() {
   //LogEnergy(header);
   LogAuger(header);
   LogHertz(header);
+  LogGovernor(header);
   Serial.println();
   lineCount++;
 }

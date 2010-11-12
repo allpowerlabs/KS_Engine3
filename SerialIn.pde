@@ -7,50 +7,50 @@ void DoSerialIn() {
   double d_d = 0.02;
   // Serial input
   if (Serial.available() > 0) {
-    p=lambda_P[0];
-    i=lambda_I[0];
-    d=lambda_D[0];
+    p=governor_P[0];
+    i=governor_I[0];
+    d=governor_D[0];
     serial_last_input = Serial.read();
     switch (serial_last_input) {
     case 'p':
       PrintLambdaUpdate(p,i,d,p+p_d,i,d);
       p=p+p_d;
-      lambda_P[0]=p;
+      governor_P[0]=p;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'P':
       PrintLambdaUpdate(p,i,d,p-p_d,i,d);
       p=p-p_d;
-      lambda_P[0]=p;
+      governor_P[0]=p;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'i':
       PrintLambdaUpdate(p,i,d,p,i+i_d,d);
       i=i+i_d;
-      lambda_I[0]=i;
+      governor_I[0]=i;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'I':
       PrintLambdaUpdate(p,i,d,p,i-i_d,d);
       i=i-i_d;
-      lambda_I[0]=i;
+      governor_I[0]=i;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'd':
       PrintLambdaUpdate(p,i,d,p,i,d+d_d);
       d=d+d_d;
-      lambda_D[0]=d;
+      governor_D[0]=d;
       lamba_updated_time = millis();
       write_lambda = true;
       break;
     case 'D':
       PrintLambdaUpdate(p,i,d,p,i,d-d_d);
       d=d-d_d;
-      lambda_D[0]=d;
+      governor_D[0]=d;
       lamba_updated_time = millis();
       write_lambda = true;
       break;

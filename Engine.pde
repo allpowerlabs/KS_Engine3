@@ -60,3 +60,26 @@ void TransitionEngine(int new_state) {
   }
   engine_state=new_state;
 }
+
+void DoGovernor() {
+  governor_input = CalculatePeriodHertz();
+  governor_PID.SetTunings(governor_P[0], governor_I[0], governor_D[0]);
+  governor_PID.Compute();
+  SetThrottleAngle(governor_output);
+}
+
+void InitGovernor() {
+  governor_setpoint = 1.0;
+  governor_PID.SetMode(AUTO);
+  governor_PID.SetSampleTime(20);
+  governor_PID.SetInputLimits(0,60);
+  governor_PID.SetOutputLimits(throttle_valve_closed,throttle_valve_open);
+  governor_output = 0;
+}
+
+void SetThrottleAngle(double percent) {
+ //servo2_pos = throttle_valve_closed + percent*(throttle_valve_open-throttle_valve_closed);
+ servo2_pos = percent;
+}
+
+

@@ -15,8 +15,12 @@ void DoServos() {
     if (abs(servo1_pos - servo1_db) > 3) {
       servo1_db = servo1_pos;
     }
+    if (abs(servo2_pos - servo2_db) > 3) {
+      servo2_db = servo2_pos;
+    }
     PulseServo(SERVO0,servo0_db);
     PulseServo(SERVO1,servo1_db);
+    PulseServo(SERVO2,servo2_db);
     servo_alt = 0; 
   }
   servo_alt++;

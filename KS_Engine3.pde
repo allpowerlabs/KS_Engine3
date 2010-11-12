@@ -171,6 +171,22 @@ String lambda_state_name;
 int lambda_state;
 unsigned long lambda_state_entered;
 
+//Governor
+  //throttle open - 83°
+  //closed - 0°
+double throttle_valve_open = 83; //calibrated angle for servo valve open
+double throttle_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
+//double throttle_valve_max = 1.00;  //minimum of range for closed loop operation (percent open)
+//double throttle_valve_min = 0.00; //maximum of range for closed loop operation (percent open)
+double governor_setpoint;
+double governor_input;
+double governor_output;
+double governor_value;
+double governor_P[1] = {2}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double governor_I[1] = {.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double governor_D[1] = {0.0}; //Unless you know what it's for, don't use D
+PID governor_PID(&governor_input, &governor_output, &governor_setpoint,governor_P[0],governor_I[0],governor_D[0]);
+
 // Pressure variables
 int Press_Calib[6];
 int Press[6]; //values corrected for sensor offset (calibration)
@@ -200,6 +216,10 @@ float servo0_db = 0; // used to deadband the servo movement
 //Servo1
 float servo1_pos;
 float servo1_db = 0; // used to deadband the servo movement
+
+//Servo2
+float servo2_pos;
+float servo2_db = 0; // used to deadband the servo movement
 
 //Open Energy Monitoring Variables
 //Setup variables
@@ -304,6 +324,7 @@ void setup() {
   
   InitGrate();
   InitPeriodHertz(); //attach interrupt
+  InitGovernor();
   
   Serial.print("#");
   Serial.println(m_grate_low);
@@ -326,6 +347,7 @@ void loop() {
     DoFlow();
     DoSerialIn();
     DoLambda();
+    DoGovernor();
     DoControlInputs();
     DoEngine();
     DoServos();
