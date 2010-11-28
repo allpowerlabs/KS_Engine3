@@ -9,9 +9,14 @@ void DoEngine() {
       if (control_state == CONTROL_OFF) {
         TransitionEngine(ENGINE_OFF);
       }
-      //if (CalculatePeriodHertz() < 40) { // Engine is not on
-      //  TransitionEngine(ENGINE_OFF);
-      //}
+      if (control_state == CONTROL_START) {
+        TransitionEngine(ENGINE_STARTING);
+      }
+      #ifdef INT_HERTZ
+      if (CalculatePeriodHertz() < 20) { // Engine is not on
+        TransitionEngine(ENGINE_OFF);
+      }
+      #endif
       break;
     case ENGINE_STARTING:
       if (control_state == CONTROL_OFF) {
