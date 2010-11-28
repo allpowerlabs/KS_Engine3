@@ -1,5 +1,5 @@
 // KS_Engine3
-// Library to use as basis for testing
+// Library used to run APL Power Pallet
 // Developed for the APL GCU/PCU: http://gekgasifier.pbworks.com/Gasifier-Control-Unit
 
 #include <EEPROM.h>         // included with Arduino, can read/writes to non-volatile memory
@@ -37,8 +37,8 @@
 #define SERVO_CALIB SERVO1
 
 //Thermocouple Mappings
-#define T_BRED 0
-#define T_TRED 1
+#define T_BRED 1
+#define T_TRED 0
 #define T_PYRO_IN 2
 #define T_PYRO_OUT 3
 #define T_COMB NULL
