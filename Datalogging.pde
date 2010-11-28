@@ -235,6 +235,7 @@ void DoDatalogging() {
   LogFilter(header);
   LogPID(header);
   //LogEnergy(header);
+  LogPulseEnergy(header);
   LogAuger(header);
   LogHertz(header);
   LogGovernor(header);

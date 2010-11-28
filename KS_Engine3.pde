@@ -56,7 +56,12 @@
 #define P_Q_GAS_ENG NULL
 
 //Interrupt Mapping
+// 2 - pin 21 - PD0
+// 3 - pin 20 - PD1
+// 4 - pin 19 - PD2
+// 5 - pin 18 - PD3
 #define INT_HERTZ 5 //interrupt number (not pin number)
+#define INT_ENERGY_PULSE 4
 
 // Grate Shaking States
 #define GRATE_SHAKE_OFF 0
@@ -147,6 +152,12 @@ unsigned long display_state_entered;
 double hertz = 0;
 volatile unsigned long hertz_last_interrupt;
 volatile int hertz_period;
+
+//Energy Pulse
+double power = 0;
+volatile int energy_pulse_count;
+volatile unsigned long energy_last_interrupt;
+volatile int energy_period;
 
 // Lambda variables
 // Servo Valve Calibration - will vary depending on the servo valve
