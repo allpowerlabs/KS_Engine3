@@ -1,5 +1,5 @@
 void DoAlarmUpdate() {
-  if (analogRead(ANA1) > 256) {
+  if (analogRead(ANA_AUGER) > 256) {
     auger_on = true;
   } else {
     auger_on = false;
@@ -36,6 +36,10 @@ void DoAlarm() {
       Serial.println("# Pressure Ratio is bad");
       alarm = true;
     }
+    if (filter_pratio_accumulator > 300) {
+      Serial.println("# Filter or gas flow may be blocked");
+      alarm = true;
+    }
     #ifdef T_LOW_FUEL
     if (Temp_Data[T_LOW_FUEL] > 230) {
       Serial.println("# Reactor fuel may be low");
@@ -43,8 +47,12 @@ void DoAlarm() {
     }
     #endif
   }
-  if ((Temp_Data[T_TRED] < 800 || Temp_Data[T_BRED] < 800) && engine_state == ENGINE_ON) {
-      Serial.println("# Temperatures too low for running engine");
+  if ((Temp_Data[T_TRED] < 800) && engine_state == ENGINE_ON) {
+      Serial.println("# T_tred too low for running engine");
+      alarm = true;
+  }
+  if ((Temp_Data[T_BRED] > 900) && engine_state == ENGINE_ON) {
+      Serial.println("# T_bred too high for running engine");
       alarm = true;
   }
 }
