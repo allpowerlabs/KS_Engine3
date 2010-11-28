@@ -1,31 +1,27 @@
 // Datalogging
 void LogTime(boolean header = false) {
   if (header) {
-    Serial.print("Time,");
+    PrintColumn("Time");
   } else {
-    Serial.print(millis()/100); // time since restart in deciseconds
-    Serial.print(", ");
+    PrintColumn(millis()/100); // time since restart in deciseconds
   }
 }
 
 void LogFlows(boolean header = false) {
   if (flow_active) {
     if (header) {
-      if (P_Q_AIR_ENG != NULL) { Serial.print("Q_air_eng,"); }
-      if (P_Q_AIR_RCT != NULL) { Serial.print("Q_air_rct,"); }
-      if (P_Q_GAS_ENG != NULL) { Serial.print("Q_gas_eng,"); }
+      if (P_Q_AIR_ENG != NULL) { PrintColumn("Q_air_eng,"); }
+      if (P_Q_AIR_RCT != NULL) { PrintColumn("Q_air_rct,"); }
+      if (P_Q_GAS_ENG != NULL) { PrintColumn("Q_gas_eng,"); }
     } else {
       if (P_Q_AIR_ENG != NULL) {
-        Serial.print(air_eng_flow);
-        Serial.print(", ");
+        PrintColumn(air_eng_flow);
       }
       if (P_Q_AIR_RCT != NULL) {
-        Serial.print(air_rct_flow);
-        Serial.print(", ");
+        PrintColumn(air_rct_flow);
       }
       if (P_Q_GAS_ENG != NULL) {
-        Serial.print(gas_eng_flow);
-        Serial.print(", ");
+        PrintColumn(gas_eng_flow);
       }
     }
   }
@@ -33,98 +29,88 @@ void LogFlows(boolean header = false) {
 
 void LogPID(boolean header = false) {
   if (header) {
-    Serial.print("Lambda_In,Lambda_Out,Lambda_Setpoint,Lambda_P,Lambda_I,Lambda_D,");
+    PrintColumn("Lambda_In");
+    PrintColumn("Lambda_Out");
+    PrintColumn("Lambda_Setpoint");
+    PrintColumn("Lambda_P");
+    PrintColumn("Lambda_I");
+    PrintColumn("Lambda_D");
   } else {
-    Serial.print(lambda_input);
-    Serial.print(", ");
-    Serial.print(lambda_output);
-    Serial.print(", ");
-    Serial.print(lambda_setpoint);
-    Serial.print(", ");
-    Serial.print(lambda_PID.GetP_Param());
-    Serial.print(", ");
-    Serial.print(lambda_PID.GetI_Param());
-    Serial.print(", ");
-    Serial.print(lambda_PID.GetD_Param());
-    Serial.print(", ");
+    PrintColumn(lambda_input);
+    PrintColumn(lambda_output);
+    PrintColumn(lambda_setpoint);
+    PrintColumn(lambda_PID.GetP_Param());
+    PrintColumn(lambda_PID.GetI_Param());
+    PrintColumn(lambda_PID.GetD_Param());
   }
 }
 
 void LogAnalogInputs(boolean header = false) {
   if (header) {
-    Serial.print("ANA0,ANA1,ANA2,ANA3,");
+    PrintColumn("ANA0");
+    PrintColumn("ANA1");
+    PrintColumn("ANA2");
+    PrintColumn("ANA3");
   } else {
-    Serial.print(ADC_ReadChanSync(0));
-    Serial.print(", ");  
-    Serial.print(ADC_ReadChanSync(1));
-    Serial.print(", ");
-    Serial.print(ADC_ReadChanSync(2));
-    Serial.print(", ");
-    Serial.print(ADC_ReadChanSync(3));
-    Serial.print(", ");
+    PrintColumn(ADC_ReadChanSync(0));
+    PrintColumn(ADC_ReadChanSync(1));
+    PrintColumn(ADC_ReadChanSync(2));
+    PrintColumn(ADC_ReadChanSync(3));
   }
 }
 
 void LogGrate(boolean header = false) {
   if (header) {
-    Serial.print("Grate,P_ratio_reactor,P_ratio_state_reactor,Grate_Val,");
+    PrintColumn("Grate");
+    PrintColumn("P_ratio_reactor");
+    PrintColumn("P_ratio_state_reactor");
+    PrintColumn("Grate_Val");
   } else {
-    Serial.print(grate_motor_state);
-    Serial.print(", ");
-    Serial.print(pRatioReactor);
-    Serial.print(", ");
-    if (pRatioReactorHigh) {
-      Serial.print(1);
-    } else {
-      Serial.print(0);
-    }
-    Serial.print(", ");
-    Serial.print(grate_val);
-    Serial.print(", ");
+    PrintColumn(grate_motor_state);
+    PrintColumn(pRatioReactor);
+    PrintColumn(pRatioReactorLevel[pRatioReactorLevelName]);
+    PrintColumn(grate_val);
   }
 }
 
 void LogFilter(boolean header = false) {
    if (header) {
-     Serial.print("P_ratio_filter,P_ratio_filter_state,");
+    PrintColumn("P_ratio_filter");
+    PrintColumn("P_ratio_filter_state");
   } else {
-    Serial.print(pRatioFilter);
-    Serial.print(", ");
+    PrintColumn(pRatioFilter);
     if (pRatioFilterHigh) {
-      Serial.print(1);
+      PrintColumn(1);
     } else {
-      Serial.print(0);
+      PrintColumn(0);
     }
-    Serial.print(", ");
   }
 }
 
 void LogPressures(boolean header = false) {
   if (header) {
     if (GCU_fill == FULLFILL) {
-      Serial.print("P0,P1,P2,P3,P4,P5,");
+      PrintColumn("P0");
+      PrintColumn("P1");
+      PrintColumn("P2");
+      PrintColumn("P3");
+      PrintColumn("P4");
+      PrintColumn("P5");
     } else {
-      Serial.print("P0,P4,");
+      PrintColumn("P0");
+      PrintColumn("P4");
     }
   } else {
     if (GCU_fill == FULLFILL) {
-      Serial.print(Press[0]);
-      Serial.print(", ");
-      Serial.print(Press[1]);
-      Serial.print(", ");
-      Serial.print(Press[2]);
-      Serial.print(", ");
-      Serial.print(Press[3]);
-      Serial.print(", ");
-      Serial.print(Press[4]);
-      Serial.print(", ");
-      Serial.print(Press[5]);
-      Serial.print(", ");
+      PrintColumn(Press[0]);
+      PrintColumn(Press[1]);
+      PrintColumn(Press[2]);
+      PrintColumn(Press[3]);
+      PrintColumn(Press[4]);
+      PrintColumn(Press[5]);
     } else {
-      Serial.print(Press[0]);
-      Serial.print(", ");
-      Serial.print(Press[4]);
-      Serial.print(", ");
+      PrintColumn(Press[0]);
+      PrintColumn(Press[4]);
     }
   }
 }
@@ -132,81 +118,106 @@ void LogPressures(boolean header = false) {
 void LogTemps(boolean header = false) {
   if (header) {
     if (true) {
-      Serial.print("T_tred,T_bred,T_pyro_in,T3,T_pyro_out,T5,T6,T7,T8,T9,");
+      PrintColumn("T_tred");
+      PrintColumn("T_bred");
+      PrintColumn("T_pyro_in");
+      PrintColumn("T3");
+      PrintColumn("T_pyro_out");
+      PrintColumn("T5");
+      PrintColumn("T6");
+      PrintColumn("T7");
+      PrintColumn("T8");
+      PrintColumn("T9");
     } else {
-      Serial.print("T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,");
+      PrintColumn("T0");
+      PrintColumn("T1");
+      PrintColumn("T2");
+      PrintColumn("T3");
+      PrintColumn("T4");
+      PrintColumn("T5");
+      PrintColumn("T6");
+      PrintColumn("T7");
+      PrintColumn("T8");
+      PrintColumn("T9");
     }
   } else {
-    Serial.print(Temp_Data[0]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[1]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[2]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[3]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[4]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[5]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[6]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[7]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[8]);
-    Serial.print(", ");
-    Serial.print(Temp_Data[9]);
-    Serial.print(", ");
+    PrintColumn(Temp_Data[0]);
+    PrintColumn(Temp_Data[1]);
+    PrintColumn(Temp_Data[2]);
+    PrintColumn(Temp_Data[3]);
+    PrintColumn(Temp_Data[4]);
+    PrintColumn(Temp_Data[5]);
+    PrintColumn(Temp_Data[6]);
+    PrintColumn(Temp_Data[7]);
+    PrintColumn(Temp_Data[8]);
+    PrintColumn(Temp_Data[9]);
   }
 } 
 
 void LogAuger(boolean header = false) {
   if (header) {
-    Serial.print("Auger,");
+    PrintColumn("Auger");
   } else {
-    Serial.print(analogRead(ANA1)); //Phidgets "2" - auger sense on APL skid
-    Serial.print(", ");
+    PrintColumn(analogRead(ANA1)); //Phidgets "2" - auger sense on APL skid
   }
 }
 
 void LogEnergy(boolean header = false) {
   if (header) {
-    Serial.print("Vrmsave,Irms1ave,Irms2ave,realPower1ave,realPower2ave,apparentPower1ave,apparentPower2ave,");
+    PrintColumn("Vrmsave");
+    PrintColumn("Irms1ave");
+    PrintColumn("Irms2ave");
+    PrintColumn("realPower1ave");
+    PrintColumn("realPower2ave");
+    PrintColumn("apparentPower1ave");
+    PrintColumn("apparentPower2ave");
   } else {
-    Serial.print(Vrmsave);
-    Serial.print(", ");
-    Serial.print(Irms1ave);
-    Serial.print(", ");
-    Serial.print(Irms2ave);
-    Serial.print(", ");
-    Serial.print(realPower1ave);
-    Serial.print(", ");  
-    Serial.print(realPower2ave);
-    Serial.print(", ");  
-    Serial.print(apparentPower1ave);
-    Serial.print(", ");  
-    Serial.print(apparentPower2ave);
+    PrintColumn(Vrmsave);
+    PrintColumn(Irms1ave);
+    PrintColumn(Irms2ave);
+    PrintColumn(realPower1ave);
+    PrintColumn(realPower2ave);
+    PrintColumn(apparentPower1ave);
+    PrintColumn(apparentPower2ave);
+  }
+}
+
+void LogPulseEnergy(boolean header = false) {
+  if (header) {
+    PrintColumn("Power");
+    PrintColumn("Energy");
+  } else {
+    PrintColumn(CalculatePulsePower());
+    PrintColumn(CalculatePulseEnergy());
   }
 }
 
 void LogHertz(boolean header = false) {
   if (header) {
-    Serial.print("Hz, ");
+    PrintColumn("Hz");
   } else {
-    Serial.print(CalculatePeriodHertz());
-    Serial.print(", ");  
+    CalculatePeriodHertz();
   }
 }
 
 void LogGovernor(boolean header=false) {
     if (header) {
-      Serial.print("ThrottlePercent,ThrottleAngle,");
+      PrintColumn("ThrottlePercent");
+      PrintColumn("ThrottleAngle");
     } else {
-      Serial.print(governor_output);
-      Serial.print(", ");
-      Serial.print(servo2_pos);
-      Serial.print(", ");  
+      PrintColumn(governor_output);
+      PrintColumn(servo2_pos);
     }
+}
+
+void PrintColumn(String str) {
+   Serial.print(str);
+   Serial.print(", ");  
+}
+
+void PrintColumn(float str) {
+   Serial.print(str);
+   Serial.print(", ");  
 }
 
 void DoDatalogging() {
