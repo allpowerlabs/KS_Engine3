@@ -7,10 +7,14 @@ void InitGrate() {
 
 void DoGrate() { // call once per second
   pRatioReactor = (float)Press[P_COMB]/(float)Press[P_REACTOR];
-  pRatioReactorHigh = (pRatioReactor < 0.3 && Press[P_REACTOR] < -200 && Press[P_COMB] < -50);
+  if (pRatioReactor < 0.3) {
+    pRatioReactorLevel = HIGHP;
+  } else {
+    pRatioReactorLevel = LOWP;
+  }
   
   // if pressure ratio is "high" for a long time, shake harder
-  if (pRatioReactorHigh) {
+  if (pRatioReactorLevel == HIGHP && Press[P_REACTOR] < -200 && Press[P_COMB] < -50) {
     grate_pratio_accumulator++;
   } else {
     grate_pratio_accumulator -= 5;
@@ -29,7 +33,7 @@ void DoGrate() { // call once per second
     break;
   case GRATE_SHAKE_PRATIO:
     if (grate_val >= GRATE_SHAKE_CROSS) { // not time to shake
-      if (pRatioReactorHigh) {
+      if (pRatioReactorLevel == HIGHP) {
         grate_val -= m_grate_high;
       } else {
         grate_val -= m_grate_low;

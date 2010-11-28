@@ -13,7 +13,7 @@ void DoAlarmUpdate() {
     auger_off_length++;
     auger_on_length = max(0,auger_on_length*.8-10);
   }
-  if (pRatioReactorHigh) {
+  if (pRatioReactorLevel == HIGHP) {
     pressureRatioAccumulator += 1;
   } else {
     pressureRatioAccumulator -= 2;

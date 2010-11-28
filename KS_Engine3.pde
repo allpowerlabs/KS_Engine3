@@ -112,7 +112,8 @@ int m_grate_on;
 
 // Reactor pressure ratio
 float pRatioReactor;
-boolean pRatioReactorHigh;
+enum pRatioReactorLevels { LOWP,HIGHP } pRatioReactorLevel;
+static char *pRatioReactorLevelName[] = { "Low", "High" };
 
 // Filter pressure ratio
 float pRatioFilter;

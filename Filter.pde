@@ -1,9 +1,8 @@
 void DoFilter() {
   pRatioFilter = (float)Press[P_REACTOR]/(float)Press[P_FILTER];
-  pRatioFilterHigh = (pRatioFilter < 0.3 && Press[P_REACTOR] < -200);
+  pRatioFilterHigh = (pRatioFilter < 0.3);
   
-  // if pressure ratio is "high" for a long time, shake harder
-  if (pRatioFilterHigh) {
+  if (pRatioFilterHigh  && Press[P_REACTOR] < -200) {
     filter_pratio_accumulator++;
   } else {
     filter_pratio_accumulator -= 5;
