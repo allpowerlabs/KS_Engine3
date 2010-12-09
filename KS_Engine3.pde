@@ -29,10 +29,9 @@
 // FET Mapping
 #define FET_IGNITION FET7
 #define FET_STARTER FET5
-
 #define FET_GRATE FET6
-
 #define FET_ALARM FET0
+#define FET_FLARE FET4
 #define FET_AUGER FET1
 
 //Servo Mapping
@@ -395,6 +394,7 @@ void loop() {
     DoControlInputs();
     DoEngine();
     DoServos();
+    DoFlare();
     DoAuger();
     DoBattery();
     DoKeyInput();
