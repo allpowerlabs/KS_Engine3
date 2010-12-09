@@ -146,7 +146,9 @@ void averageEnergyValues() {
 }
 
 void InitPulseEnergyMonitoring() {
+  pinMode(19, INPUT); //PD2
   attachInterrupt(INT_ENERGY_PULSE,DoPulseEnergyMonitoring,RISING);
+  energy_last_interrupt = micros();
 }
 
 void DoPulseEnergyMonitoring() {
