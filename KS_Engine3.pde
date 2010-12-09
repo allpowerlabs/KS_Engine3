@@ -184,6 +184,9 @@ double battery_voltage;
 int display_state = DISPLAY_SPLASH;
 unsigned long display_state_entered;
 
+//Keypad
+int key;
+
 //Hertz
 double hertz = 0;
 volatile unsigned long hertz_last_interrupt;
@@ -377,7 +380,6 @@ void setup() {
 }
 
 void loop() {
-  int key;
   if (millis() >= nextTime3) {
     nextTime3 += loopPeriod3;
     // first, read all KS's sensors
@@ -395,7 +397,10 @@ void loop() {
     DoServos();
     DoAuger();
     DoBattery();
+    DoKeyInput();
+    DoHeartBeat(); // blink heartbeat LED
     if (millis() >= nextTime2) {
+      DoDisplay();
       MeasureElectricalPower();
       accumulateEnergyValues();
       if (millis() >= nextTime1) {
@@ -417,24 +422,6 @@ void loop() {
         }
       }
     }
-    // END USER CONTROL CODE
-    //UI_DoScr();       // output the display screen data, 
-    // (default User Interface functions are in library KS/ui.c)
-    // XXX should be migrated out of library layer, up to sketch layer                      
-     key = Kpd_GetKeyAsync();
-    // get key asynnchronous (doesn't wait for a keypress)
-    // returns -1 if no key
-
-    UI_HandleKey(key);  // the other two thirds of the UI routines:
-    // given the key press (if any), then update the internal
-    //   User Interface data structures
-    // ALSO: Manipulate the various output data structures
-    //   based on the keypad input
-
-    Fet_WriteAll();   // Write the FET output data to the PWM hardware
-    Servo_WriteAll(); // Write the Futaba hobby servo data to the PWM hardware
-
-    PORTJ ^= 0x80;    // toggle the heartbeat LED
   }
 }
 

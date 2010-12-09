@@ -86,3 +86,11 @@ void TransitionDisplay(int new_state) {
   }
   display_state=new_state;
 }
+
+void DoKeyInput() {
+  key = Kpd_GetKeyAsync();
+}
+
+void DoHeartBeat() {
+  PORTJ ^= 0x80;    // toggle the heartbeat LED
+}
