@@ -7,9 +7,15 @@ void DoSerialIn() {
   double d_d = 0.02;
   // Serial input
   if (Serial.available() > 0) {
+<<<<<<< Updated upstream
     p=governor_P[0];
     i=governor_I[0];
     d=governor_D[0];
+=======
+    p=lambda_P[0];
+    i=lambda_I[0];
+    d=lambda_D[0];
+>>>>>>> Stashed changes
     serial_last_input = Serial.read();
     switch (serial_last_input) {
     case 'p':
