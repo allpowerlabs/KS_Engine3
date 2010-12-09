@@ -23,12 +23,14 @@ void DoDisplay() {
       Disp_RC(0, 0);
       sprintf(buf, "Ttred%4ld  ", Temp_Data[T_TRED]);
       Disp_PutStr(buf);
+      Disp_RC(0, 11);
       sprintf(buf, "Pcomb%4ld", Press_Data[P_COMB] / 25);
       Disp_PutStr(buf);
       
       Disp_RC(1, 0);
       sprintf(buf, "Tbred%4ld  ", Temp_Data[T_BRED]);
       Disp_PutStr(buf);
+      Disp_RC(1, 11);
       sprintf(buf, "Preac%4ld", Press_Data[P_REACTOR] / 25);
       Disp_PutStr(buf);
       
@@ -36,9 +38,11 @@ void DoDisplay() {
       if (Press_Data[P_REACTOR] < -500) {
         sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
         Disp_PutStr(buf);
+   
       } else {
         Disp_PutStr("Prati  --  ");
       }
+      Disp_RC(2, 11);
       sprintf(buf, "Pfilt%4ld", Press_Data[P_FILTER] / 25);
       Disp_PutStr(buf);
       
@@ -55,10 +59,17 @@ void DoDisplay() {
         sprintf(buf, "Batt%5i", int(battery_voltage*10));
         //sprintf(buf, "Pow %5i", int(CalculatePulsePower()));
       }
+      Disp_RC(3, 11);
       Disp_PutStr(buf);
       break;
     case DISPLAY_ENGINE:
       break;
+//    case DISPLAY_TEMP1:
+//      break;
+//    case DISPLAY_TEMP2:
+//      break;
+//    case DISPLAY_FETS:
+//      break;
   }
 }
 
