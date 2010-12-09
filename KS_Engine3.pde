@@ -18,6 +18,7 @@
 
 // Analog Input Mapping
 #define ANA_LAMBDA 0
+#define ANA_ENGINE_SWITCH ANA2
 #define ANA_FUEL_SWITCH NULL
 #define ANA_AUGER_CURRENT ANA1  //sense current in auger motor
 #define ANA_V NULL

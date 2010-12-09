@@ -74,7 +74,7 @@ void TransitionLambda(int new_state) {
        loopPeriod1 = loopPeriod1*4; //return to normal datalogging rate
        break;
   }
-  Serial.print("#Lambda switching from ");
+  Serial.print("# Lambda switching from ");
   Serial.print(lambda_state_name);
   
   //Enter
