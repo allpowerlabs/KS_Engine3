@@ -52,7 +52,8 @@ void DoDisplay() {
       if (millis() % 2000 > 1000) {
         sprintf(buf, "Hz   %4i", int(CalculatePeriodHertz()));
       } else {
-        sprintf(buf, "Pow %5i", int(CalculatePulsePower()));
+        sprintf(buf, "Batt%5i", int(battery_voltage*10));
+        //sprintf(buf, "Pow %5i", int(CalculatePulsePower()));
       }
       Disp_PutStr(buf);
       break;
