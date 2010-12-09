@@ -117,14 +117,28 @@ int m_grate_on;
 
 // Reactor pressure ratio
 float pRatioReactor;
-enum pRatioReactorLevels { LOWP,HIGHP } pRatioReactorLevel;
+enum pRatioReactorLevels { GOOD = 0,BAD = 1} pRatioReactorLevel;
 static char *pRatioReactorLevelName[] = { "Low", "High" };
+float pRatioReactorLevelBoundary[2][2] = { { 0.9, 0.3 }, {0.3, 0.0} };
 
 // Filter pressure ratio
 float pRatioFilter;
 boolean pRatioFilterHigh;
 int filter_pratio_accumulator;
 
+// Temperature Levels
+enum TempLevels { COLD = 0,COOL = 1,WARM = 2 ,HOT = 3, EXCESSIVE = 4};
+TempLevels T_tredLevel;
+static char *TempLevelName[] = { "Cold", "Cool", "Warm", "Hot", "Too Hot" };
+int T_tredLevelBoundary[5][2] = { { 0, 40 }, {50, 80}, {300,600}, {800,950}, {1000,1250} };
+
+TempLevels T_bredLevel;
+int T_bredLevelBoundary[5][2] = { { 0, 40 }, {50, 80}, {300,600}, {800,950}, {1000,1250} };
+
+//Pressure Levels
+enum P_reactorLevels { OFF = 0, LITE = 1, MEDIUM = 2 , EXTREME = 3} P_reactorLevel;
+static char *P_reactorLevelName[] = { "Off", "Low", "Medium", "High"};
+int P_reactorBoundary[4][2] = { { 0, 50 }, {50, 500}, {750,2000}, {2000,4000} };
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
 //TO DO: move loops to hardware timer and interrupt based control, figure out interrupt prioritization
 int loopPeriod0 = 5000;
