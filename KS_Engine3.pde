@@ -109,7 +109,7 @@ int grateMode = GRATE_SHAKE_PRATIO; //set default starting state
 int grate_motor_state; //changed to indicate state (for datalogging, etc)
 int grate_val = GRATE_SHAKE_INIT; //variable that is changed and checked
 int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger shaking past threshhold
-int grate_max_interval = 15*60; //longest total interval in seconds
+int grate_max_interval = 5*60; //longest total interval in seconds
 int grate_min_interval = 60;
 int grate_on_interval = 2;
 //define these in setup, how much to remove from grate_val each cycle [1 second] (slope)
