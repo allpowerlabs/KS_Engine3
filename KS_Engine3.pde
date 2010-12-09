@@ -24,6 +24,7 @@
 #define ANA_V NULL
 #define ANA_CT_LEG1 NULL
 #define ANA_CT_LEG2 NULL
+#define ANA_BATT_V ANA3
 
 // FET Mapping
 #define FET_IGNITION FET7
@@ -177,6 +178,7 @@ int control_state = CONTROL_OFF;
 int engine_state = ENGINE_OFF;
 unsigned long engine_end_cranking;
 int engine_crank_period = 10000; //length of time to crank engine before stopping (milliseconds)
+double battery_voltage;
 
 //Display 
 int display_state = DISPLAY_SPLASH;
@@ -392,6 +394,7 @@ void loop() {
     DoEngine();
     DoServos();
     DoAuger();
+    DoBattery();
     if (millis() >= nextTime2) {
       MeasureElectricalPower();
       accumulateEnergyValues();

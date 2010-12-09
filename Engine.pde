@@ -87,4 +87,10 @@ void SetThrottleAngle(double percent) {
  servo2_pos = percent;
 }
 
+void DoBattery() {
+  #if ANA_BATT_V != NULL
+  battery_voltage = 0.07528*(analogRead(ANA_BATT_V)-512);
+  #endif
+}
+
 

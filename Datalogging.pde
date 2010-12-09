@@ -218,6 +218,14 @@ void LogGovernor(boolean header=false) {
     }
 }
 
+void LogBatteryVoltage(boolean header=false) {
+    if (header) {
+      PrintColumn("battery_voltage");
+    } else {
+      PrintColumn(battery_voltage);
+    }
+}
+
 void PrintColumn(String str) {
    Serial.print(str);
    Serial.print(", ");  
