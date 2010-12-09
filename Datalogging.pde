@@ -51,11 +51,15 @@ void LogAnalogInputs(boolean header = false) {
     PrintColumn("ANA1");
     PrintColumn("ANA2");
     PrintColumn("ANA3");
+    PrintColumn("ANA4");
+    PrintColumn("ANA5");
   } else {
-    PrintColumn(ADC_ReadChanSync(0));
-    PrintColumn(ADC_ReadChanSync(1));
-    PrintColumn(ADC_ReadChanSync(2));
-    PrintColumn(ADC_ReadChanSync(3));
+    PrintColumnInt(analogRead(ANA0));
+    PrintColumnInt(analogRead(ANA1));
+    PrintColumnInt(analogRead(ANA2));
+    PrintColumnInt(analogRead(ANA3));
+    PrintColumnInt(analogRead(ANA4));
+    PrintColumnInt(analogRead(ANA5));
   }
 }
 
