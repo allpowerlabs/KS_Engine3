@@ -366,9 +366,10 @@ void setup() {
   Timer_Reset();
   Timer2_Reset();
   
-  InitGrate();
+  InitGrate();  
   InitPeriodHertz(); //attach interrupt
   InitGovernor();
+  InitPulseEnergyMonitoring();
   
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
   TransitionLambda(LAMBDA_CLOSEDLOOP);
@@ -383,7 +384,6 @@ void loop() {
     Temp_ReadAll();  // reads into array Temp_Data[], in deg C
     Press_ReadAll(); // reads into array Press_Data[], in hPa
     Timer_ReadAll(); // reads pulse timer into Timer_Data, in RPM ??? XXX
-    DoDisplay();
     DoPressure();
     DoFlow();
     DoSerialIn();

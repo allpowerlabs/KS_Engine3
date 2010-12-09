@@ -12,11 +12,11 @@ void DoEngine() {
       if (control_state == CONTROL_START) {
         TransitionEngine(ENGINE_STARTING);
       }
-      #ifdef INT_HERTZ
-      if (CalculatePeriodHertz() < 20) { // Engine is not on
-        TransitionEngine(ENGINE_OFF);
-      }
-      #endif
+//      #ifdef INT_HERTZ
+//      if (CalculatePeriodHertz() < 20) { // Engine is not on
+//        TransitionEngine(ENGINE_OFF);
+//      }
+//      #endif
       break;
     case ENGINE_STARTING:
       if (control_state == CONTROL_OFF) {
@@ -46,20 +46,17 @@ void TransitionEngine(int new_state) {
     case ENGINE_OFF:
       analogWrite(FET_IGNITION,0);
       analogWrite(FET_STARTER,0);
-      grateMode = GRATE_SHAKE_OFF;
       Serial.println("# New Engine State: Off");
       break;
     case ENGINE_ON:
       analogWrite(FET_IGNITION,255);
       analogWrite(FET_STARTER,0);
-      grateMode = GRATE_SHAKE_PRATIO;
       Serial.println("# New Engine State: On");
       break;
     case ENGINE_STARTING:
       analogWrite(FET_IGNITION,255);
       analogWrite(FET_STARTER,255);
       engine_end_cranking = millis() + engine_crank_period;
-      grateMode = GRATE_SHAKE_PRATIO;
       Serial.println("# New Engine State: Starting");
       break;
   }
