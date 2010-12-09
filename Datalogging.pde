@@ -156,9 +156,11 @@ void LogTemps(boolean header = false) {
 
 void LogAuger(boolean header = false) {
   if (header) {
-    PrintColumn("Auger");
+    PrintColumn("AugerCurrent");
+    PrintColumn("AugerLevel");
   } else {
-    PrintColumn(analogRead(ANA1)); //Phidgets "2" - auger sense on APL skid
+    PrintColumnInt(AugerCurrentValue);
+    PrintColumn(AugerCurrentLevel[AugerCurrentLevelName]);
   }
 }
 

@@ -18,8 +18,8 @@
 
 // Analog Input Mapping
 #define ANA_LAMBDA 0
-#define ANA_AUGER 1
-#define ANA_SWITCH 2
+#define ANA_FUEL_SWITCH NULL
+#define ANA_AUGER_CURRENT ANA1  //sense current in auger motor
 #define ANA_V NULL
 #define ANA_CT_LEG1 NULL
 #define ANA_CT_LEG2 NULL
@@ -31,6 +31,7 @@
 #define FET_GRATE FET6
 
 #define FET_ALARM FET0
+#define FET_AUGER FET1
 
 //Servo Mapping
 #define SERVO_MIXTURE SERVO0
@@ -139,6 +140,24 @@ int T_bredLevelBoundary[5][2] = { { 0, 40 }, {50, 80}, {300,600}, {800,950}, {10
 enum P_reactorLevels { OFF = 0, LITE = 1, MEDIUM = 2 , EXTREME = 3} P_reactorLevel;
 static char *P_reactorLevelName[] = { "Off", "Low", "Medium", "High"};
 int P_reactorBoundary[4][2] = { { 0, 50 }, {50, 500}, {750,2000}, {2000,4000} };
+
+//Auger Switch Levels
+#if ANA_FUEL_SWITCH != NULL
+int FuelSwitchValue = 0;
+enum FuelSwitchLevels { SWITCH_OFF = 0, SWITCH_ON = 1} FuelSwitchLevel;
+int FuelSwitchLevelBoundary[2][2] = {{ 0, 200 }, {800, 1024}};
+#endif
+
+//Auger Current Levels
+#if ANA_AUGER_CURRENT != NULL
+int AugerCurrentValue = 0; // current level in mA
+enum AugerCurrentLevels { AUGER_OFF = 0, AUGER_ON = 1, AUGER_HIGH = 2} AugerCurrentLevel;
+static char *AugerCurrentLevelName[] = { "Off","On", "High"};
+int AugerCurrentLevelBoundary[3][2] = { { 0, 500}, {500, 5000}, {5000,20000} };
+#endif
+
+
+
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
 //TO DO: move loops to hardware timer and interrupt based control, figure out interrupt prioritization
 int loopPeriod0 = 5000;
@@ -371,6 +390,7 @@ void loop() {
     DoControlInputs();
     DoEngine();
     DoServos();
+    DoAuger();
     if (millis() >= nextTime2) {
       MeasureElectricalPower();
       accumulateEnergyValues();

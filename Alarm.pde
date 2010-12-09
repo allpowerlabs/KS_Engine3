@@ -1,9 +1,4 @@
 void DoAlarmUpdate() {
-  if (analogRead(ANA_AUGER) > 256) {
-    auger_on = true;
-  } else {
-    auger_on = false;
-  }
   if (auger_on) {
     // auger on
     auger_on_length++;
