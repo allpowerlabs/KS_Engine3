@@ -17,7 +17,7 @@
 #include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
 
 // Analog Input Mapping
-#define ANA_LAMBDA 0
+#define ANA_LAMBDA ANA0
 #define ANA_ENGINE_SWITCH ANA2
 #define ANA_FUEL_SWITCH NULL
 #define ANA_AUGER_CURRENT ANA1  //sense current in auger motor
