@@ -370,8 +370,6 @@ void setup() {
   InitPeriodHertz(); //attach interrupt
   InitGovernor();
   
-  Serial.print("#");
-  Serial.println(m_grate_low);
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
   TransitionLambda(LAMBDA_CLOSEDLOOP);
   TransitionDisplay(DISPLAY_SPLASH);
