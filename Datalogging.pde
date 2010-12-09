@@ -3,7 +3,7 @@ void LogTime(boolean header = false) {
   if (header) {
     PrintColumn("Time");
   } else {
-    PrintColumn(millis()/100); // time since restart in deciseconds
+    PrintColumnInt(millis()/100.0); // time since restart in deciseconds
   }
 }
 
@@ -65,12 +65,14 @@ void LogAnalogInputs(boolean header = false) {
 
 void LogGrate(boolean header = false) {
   if (header) {
+    PrintColumn("grateMode");
     PrintColumn("Grate");
     PrintColumn("P_ratio_reactor");
     PrintColumn("P_ratio_state_reactor");
     PrintColumn("Grate_Val");
   } else {
-    PrintColumn(grate_motor_state);
+    PrintColumnInt(grateMode);
+    PrintColumnInt(grate_motor_state);
     PrintColumn(pRatioReactor);
     PrintColumn(pRatioReactorLevel[pRatioReactorLevelName]);
     PrintColumn(grate_val);
@@ -84,9 +86,9 @@ void LogFilter(boolean header = false) {
   } else {
     PrintColumn(pRatioFilter);
     if (pRatioFilterHigh) {
-      PrintColumn(1);
+      PrintColumnInt(1);
     } else {
-      PrintColumn(0);
+      PrintColumnInt(0);
     }
   }
 }
@@ -106,15 +108,15 @@ void LogPressures(boolean header = false) {
     }
   } else {
     if (GCU_fill == FULLFILL) {
-      PrintColumn(Press[0]);
-      PrintColumn(Press[1]);
-      PrintColumn(Press[2]);
-      PrintColumn(Press[3]);
-      PrintColumn(Press[4]);
-      PrintColumn(Press[5]);
+      PrintColumnInt(Press[0]);
+      PrintColumnInt(Press[1]);
+      PrintColumnInt(Press[2]);
+      PrintColumnInt(Press[3]);
+      PrintColumnInt(Press[4]);
+      PrintColumnInt(Press[5]);
     } else {
-      PrintColumn(Press[0]);
-      PrintColumn(Press[4]);
+      PrintColumnInt(Press[0]);
+      PrintColumnInt(Press[4]);
     }
   }
 }
@@ -145,16 +147,16 @@ void LogTemps(boolean header = false) {
       PrintColumn("T9");
     }
   } else {
-    PrintColumn(Temp_Data[0]);
-    PrintColumn(Temp_Data[1]);
-    PrintColumn(Temp_Data[2]);
-    PrintColumn(Temp_Data[3]);
-    PrintColumn(Temp_Data[4]);
-    PrintColumn(Temp_Data[5]);
-    PrintColumn(Temp_Data[6]);
-    PrintColumn(Temp_Data[7]);
-    PrintColumn(Temp_Data[8]);
-    PrintColumn(Temp_Data[9]);
+    PrintColumnInt(Temp_Data[0]);
+    PrintColumnInt(Temp_Data[1]);
+    PrintColumnInt(Temp_Data[2]);
+    PrintColumnInt(Temp_Data[3]);
+    PrintColumnInt(Temp_Data[4]);
+    PrintColumnInt(Temp_Data[5]);
+    PrintColumnInt(Temp_Data[6]);
+    PrintColumnInt(Temp_Data[7]);
+    PrintColumnInt(Temp_Data[8]);
+    PrintColumnInt(Temp_Data[9]);
   }
 } 
 
@@ -181,10 +183,10 @@ void LogEnergy(boolean header = false) {
     PrintColumn(Vrmsave);
     PrintColumn(Irms1ave);
     PrintColumn(Irms2ave);
-    PrintColumn(realPower1ave);
-    PrintColumn(realPower2ave);
-    PrintColumn(apparentPower1ave);
-    PrintColumn(apparentPower2ave);
+    PrintColumnInt(realPower1ave);
+    PrintColumnInt(realPower2ave);
+    PrintColumnInt(apparentPower1ave);
+    PrintColumnInt(apparentPower2ave);
   }
 }
 
@@ -193,8 +195,8 @@ void LogPulseEnergy(boolean header = false) {
     PrintColumn("Power");
     PrintColumn("Energy");
   } else {
-    PrintColumn(CalculatePulsePower());
-    PrintColumn(CalculatePulseEnergy());
+    PrintColumnInt(CalculatePulsePower());
+    PrintColumnInt(CalculatePulseEnergy());
   }
 }
 
@@ -202,7 +204,7 @@ void LogHertz(boolean header = false) {
   if (header) {
     PrintColumn("Hz");
   } else {
-    CalculatePeriodHertz();
+    PrintColumnInt(CalculatePeriodHertz());
   }
 }
 
@@ -226,6 +228,11 @@ void PrintColumn(float str) {
    Serial.print(", ");  
 }
 
+void PrintColumnInt(int str) {
+   Serial.print(str);
+   Serial.print(", ");  
+}
+
 void DoDatalogging() {
   boolean header = false;
   Serial.begin(57600); //reset serial?
@@ -236,15 +243,16 @@ void DoDatalogging() {
   LogTemps(header);
   LogPressures(header);
   LogAnalogInputs(header);
-  LogFlows(header);
+  //LogFlows(header);
   LogGrate(header);
   LogFilter(header);
   LogPID(header);
   //LogEnergy(header);
-  LogPulseEnergy(header);
   LogAuger(header);
   LogHertz(header);
-  LogGovernor(header);
+  //LogGovernor(header);
+  LogPulseEnergy(header);
+  LogBatteryVoltage(header);
   Serial.println();
   lineCount++;
 }

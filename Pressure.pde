@@ -30,12 +30,12 @@ void CalibratePressureSensors() {
 void LoadPressureSensorCalibration() {
   int calib;
   byte lowbyte,highbyte;
-  Serial.println("Loading Pressure Sensor Calibrations:");
+  Serial.println("#Loading Pressure Sensor Calibrations:");
   for (int i=0; i<6; i++) {
     byte lowByte = EEPROM.read(i*2);
     byte highByte = EEPROM.read(i*2 + 1);
     Press_Calib[i] = ((lowByte << 0) & 0xFF) + ((highByte << 8) & 0xFF00);
-    Serial.print("P");
+    Serial.print("#P");
     Serial.print(i);
     Serial.print(": ");
     Serial.print(Press_Calib[i]);
