@@ -59,38 +59,45 @@ void DoDisplay() {
       Disp_RC(2,0);
       if (Press_Data[P_REACTOR] < -500) {
         //the value only means anything if the pressures are high enough, otherwise it is just noise
-        if (disp_alt) {
-          sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
-        } else {
-          if (pRatioFilterHigh) {
-            sprintf(buf, "Pfilt  Bad");
-          } else {
-            sprintf(buf, "Pfilt Good");
-          }
-        }
+        sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
         Disp_PutStr(buf);
       } else {
         Disp_PutStr("Prati  --  ");
       }
       Disp_RC(2, 11);
-      sprintf(buf, "Pfilt%4ld", Press_Data[P_FILTER] / 25);
+      if (disp_alt) {
+        sprintf(buf, "Pfilt%4ld", Press_Data[P_FILTER] / 25);
+      } else {
+        if (pRatioFilterHigh) {
+          sprintf(buf, "Pfilt  Bad");
+        } else {
+          sprintf(buf, "Pfilt Good");
+        }
+      }
       Disp_PutStr(buf);
       
-      Disp_RC(3,0);
-      if (auger_on) {
-        sprintf(buf, "Aug On%3i  ", auger_on_length);
-      } else {  
-        sprintf(buf, "AugOff%3i  ", auger_off_length);                                                                                                                                                                                                                                                                                                                                                                                                                           
-      }
-      Disp_PutStr(buf);
-      if (millis() % 2000 > 1000) {
-        sprintf(buf, "Hz   %4i", int(CalculatePeriodHertz()));
+      //Row 3
+      if (millis() % 4000 > 2000 & alarm != ALARM_NONE) {
+        Disp_RC(3,0);
+        Disp_PutStr(display_alarm[alarm]);
       } else {
-        sprintf(buf, "Batt%5i", int(battery_voltage*10));
-        //sprintf(buf, "Pow %5i", int(CalculatePulsePower()));
+        Disp_RC(3,0);
+        if (auger_on) {
+          sprintf(buf, "Aug On%3i  ", auger_on_length);
+        } else {  
+          sprintf(buf, "AugOff%3i  ", auger_off_length);                                                                                                                                                                                                                                                                                                                                                                                                                           
+        }
+        Disp_PutStr(buf);
+        sprintf(buf, "         ");
+        //if (disp_alt) {
+        //  sprintf(buf, "Hz   %4i", int(CalculatePeriodHertz()));
+        //} else {
+        //  sprintf(buf, "Batt%5i", int(battery_voltage*10));
+        //  //sprintf(buf, "Pow %5i", int(CalculatePulsePower()));
+        //}
+        Disp_RC(3, 11);
+        Disp_PutStr(buf);
       }
-      Disp_RC(3, 11);
-      Disp_PutStr(buf);
       break;
     case DISPLAY_ENGINE:
       break;
