@@ -14,13 +14,6 @@ void DoGrate() { // call once per second
     pRatioReactorLevel = GOOD;
   }
   
-  //set grate mode
-  if (engine_state == ENGINE_ON || engine_state == ENGINE_STARTING || P_reactorLevel != OFF) {
-    grateMode = GRATE_SHAKE_PRATIO;
-  } else {
-    grateMode = GRATE_SHAKE_OFF;
-  }
-  
   // if pressure ratio is "high" for a long time, shake harder
   if (pRatioReactorLevel == BAD && Press[P_REACTOR] < -50 && Press[P_COMB] < -50) {
     grate_pratio_accumulator++;
@@ -32,30 +25,35 @@ void DoGrate() { // call once per second
   // handle different shaking modes
   switch (grateMode) {
   case GRATE_SHAKE_ON:
-    analogWrite(FET_GRATE, 255);
+    digitalWrite(FET_GRATE,HIGH);
     grate_motor_state = GRATE_MOTOR_LOW;
     break;
   case GRATE_SHAKE_OFF:
-    analogWrite(FET_GRATE,0);
+    digitalWrite(FET_GRATE,LOW);
     grate_motor_state = GRATE_MOTOR_OFF;
     break;
   case GRATE_SHAKE_PRATIO:
-    if (grate_val >= GRATE_SHAKE_CROSS) { // not time to shake
-      if (pRatioReactorLevel == BAD) {
-        grate_val -= m_grate_high;
-      } else {
-        grate_val -= m_grate_low;
+    if (engine_state == ENGINE_ON || engine_state == ENGINE_STARTING || P_reactorLevel != OFF) { //shake only if reactor is on and/or engine is on
+      //condition above will leave grate_val in the last state until conditions are met (not continuing to cycle)
+      if (grate_val >= GRATE_SHAKE_CROSS) { // not time to shake
+        if (pRatioReactorLevel == BAD) {
+          grate_val -= m_grate_high;
+        } else {
+          grate_val -= m_grate_low;
+        }
+        analogWrite(FET_GRATE,0);
+        grate_motor_state = GRATE_MOTOR_OFF;
       }
-      grate_motor_state = GRATE_MOTOR_OFF;
-      analogWrite(FET_GRATE,0);
-    } else { //time to shake or reset
-      if (grate_val >= 0) { //shake
-        grate_val -= m_grate_on;
-      } else { //reset
-        grate_val = GRATE_SHAKE_INIT;
-      }
+    }
+    if (grate_val >= 0 & grate_val <= GRATE_SHAKE_CROSS) { //time to shake or reset
       grate_motor_state = GRATE_MOTOR_LOW;
-      analogWrite(FET_GRATE,255);
+      digitalWrite(FET_GRATE,HIGH);
+      grate_val -= m_grate_on;
+    }
+    if (grate_val <= 0) {
+      grate_val = GRATE_SHAKE_INIT;
+      grate_motor_state = GRATE_MOTOR_OFF;
+      digitalWrite(FET_GRATE,LOW);
     }
     break;
   }
