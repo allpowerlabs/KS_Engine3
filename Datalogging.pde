@@ -10,17 +10,17 @@ void LogTime(boolean header = false) {
 void LogFlows(boolean header = false) {
   if (flow_active) {
     if (header) {
-      if (P_Q_AIR_ENG != NULL) { PrintColumn("Q_air_eng,"); }
-      if (P_Q_AIR_RCT != NULL) { PrintColumn("Q_air_rct,"); }
-      if (P_Q_GAS_ENG != NULL) { PrintColumn("Q_gas_eng,"); }
+      if (P_Q_AIR_ENG != ABSENT) { PrintColumn("Q_air_eng,"); }
+      if (P_Q_AIR_RCT != ABSENT) { PrintColumn("Q_air_rct,"); }
+      if (P_Q_GAS_ENG != ABSENT) { PrintColumn("Q_gas_eng,"); }
     } else {
-      if (P_Q_AIR_ENG != NULL) {
+      if (P_Q_AIR_ENG != ABSENT) {
         PrintColumn(air_eng_flow);
       }
-      if (P_Q_AIR_RCT != NULL) {
+      if (P_Q_AIR_RCT != ABSENT) {
         PrintColumn(air_rct_flow);
       }
-      if (P_Q_GAS_ENG != NULL) {
+      if (P_Q_GAS_ENG != ABSENT) {
         PrintColumn(gas_eng_flow);
       }
     }
@@ -85,111 +85,132 @@ void LogFilter(boolean header = false) {
     PrintColumn("P_ratio_filter_state");
   } else {
     PrintColumn(pRatioFilter);
+    //TODO: Move to enum
     if (pRatioFilterHigh) {
-      PrintColumnInt(1);
+      PrintColumn("Bad");
     } else {
-      PrintColumnInt(0);
+      PrintColumn("Good");
     }
   }
 }
 
 void LogPressures(boolean header = false) {
   if (header) {
-    if (GCU_fill == FULLFILL) {
-      PrintColumn("P0");
-      PrintColumn("P1");
-      PrintColumn("P2");
-      PrintColumn("P3");
-      PrintColumn("P4");
-      PrintColumn("P5");
-    } else {
-      PrintColumn("P0");
-      PrintColumn("P4");
-    }
+    //TODO: Handle half/full fill
+    #if P_REACTOR != ABSENT
+      PrintColumn("P_reactor");
+    #endif
+    #if P_FILTER != ABSENT
+      PrintColumn("P_filter");
+    #endif
+    #if P_COMB != ABSENT
+      PrintColumn("P_comb");
+    #endif
+    #if P_Q_AIR_ENG != ABSENT
+      PrintColumn("P_Q_air_eng");
+    #endif
+    #if P_Q_AIR_RCT != ABSENT
+      PrintColumn("P_Q_air_rct");
+    #endif
+    #if P_Q_GAS_ENG != ABSENT
+      PrintColumn("P_Q_gas_eng");
+    #endif
   } else {
-    if (GCU_fill == FULLFILL) {
-      PrintColumnInt(Press[0]);
-      PrintColumnInt(Press[1]);
-      PrintColumnInt(Press[2]);
-      PrintColumnInt(Press[3]);
-      PrintColumnInt(Press[4]);
-      PrintColumnInt(Press[5]);
-    } else {
-      PrintColumnInt(Press[0]);
-      PrintColumnInt(Press[4]);
-    }
+    #if P_REACTOR != ABSENT
+      PrintColumnInt(Press[P_REACTOR]);
+    #endif
+    #if P_FILTER != ABSENT
+      PrintColumnInt(Press[P_FILTER]);
+    #endif
+    #if P_COMB != ABSENT
+      PrintColumnInt(Press[P_COMB]);
+    #endif
+    #if P_Q_AIR_ENG != ABSENT
+      PrintColumnInt(Press[P_Q_AIR_ENG]);
+    #endif
+    #if P_Q_AIR_RCT != ABSENT
+      PrintColumnInt(Press[P_Q_AIR_RCT]);
+    #endif
+    #if P_Q_GAS_ENG != ABSENT
+      PrintColumnInt(Press[P_Q_GAS_ENG]);
+    #endif
   }
 }
 
 void LogTemps(boolean header = false) {
   if (header) {
-    if (true) {
-      PrintColumn("T_tred");
-      PrintColumn("T_bred");
-      PrintColumn("T_pyro_in");
-      PrintColumn("T3");
-      PrintColumn("T_pyro_out");
-      PrintColumn("T5");
-      PrintColumn("T6");
-      PrintColumn("T7");
-      PrintColumn("T8");
-      PrintColumn("T9");
-    } else {
-      PrintColumn("T0");
-      PrintColumn("T1");
-      PrintColumn("T2");
-      PrintColumn("T3");
-      PrintColumn("T4");
-      PrintColumn("T5");
-      PrintColumn("T6");
-      PrintColumn("T7");
-      PrintColumn("T8");
-      PrintColumn("T9");
-    }
+      #if T_TRED != ABSENT
+        PrintColumn("T_tred");
+      #endif
+      #if T_BRED != ABSENT
+        PrintColumn("T_bred");
+      #endif
+      #if T_PYRO_IN != ABSENT
+        PrintColumn("T_pyro_in");
+      #endif
+      #if T_PYRO_OUT != ABSENT
+        PrintColumn("T_pyro_out");
+      #endif
+      #if T_ENG_COOLANT != ABSENT
+        PrintColumn("T_eng_coolant");
+      #endif 
+      #if T_DRYING_GAS_OUT != ABSENT
+        PrintColumn("T_drying_gas_out");
+      #endif
+      #if T_REACTOR_GAS_OUT != ABSENT
+        PrintColumn("T_reactor_gas_out");
+      #endif
+      #if T_FILTER != ABSENT
+        PrintColumn("T_filter");
+      #endif
   } else {
-    PrintColumnInt(Temp_Data[0]);
-    PrintColumnInt(Temp_Data[1]);
-    PrintColumnInt(Temp_Data[2]);
-    PrintColumnInt(Temp_Data[3]);
-    PrintColumnInt(Temp_Data[4]);
-    PrintColumnInt(Temp_Data[5]);
-    PrintColumnInt(Temp_Data[6]);
-    PrintColumnInt(Temp_Data[7]);
-    PrintColumnInt(Temp_Data[8]);
-    PrintColumnInt(Temp_Data[9]);
+    #if T_TRED != ABSENT
+      PrintColumnInt(Temp_Data[T_TRED]);
+    #endif
+    #if T_BRED != ABSENT
+      PrintColumnInt(Temp_Data[T_BRED]);
+    #endif
+    #if T_PYRO_IN != ABSENT
+      PrintColumnInt(Temp_Data[T_PYRO_IN]);
+    #endif
+    #if T_PYRO_OUT != ABSENT
+      PrintColumnInt(Temp_Data[T_PYRO_OUT]);
+    #endif
+    #if T_ENG_COOLANT != ABSENT
+      PrintColumnInt(Temp_Data[T_ENG_COOLANT]);
+    #endif 
+    #if T_DRYING_GAS_OUT != ABSENT
+      PrintColumnInt(Temp_Data[T_DRYING_GAS_OUT]);
+    #endif
+    #if T_REACTOR_GAS_OUT != ABSENT
+      PrintColumnInt(Temp_Data[T_REACTOR_GAS_OUT]);
+    #endif
+    #if T_FILTER != ABSENT
+      PrintColumnInt(Temp_Data[T_FILTER]);
+    #endif
   }
 } 
 
 void LogAuger(boolean header = false) {
   if (header) {
-    PrintColumn("AugerCurrent");
-    PrintColumn("AugerLevel");
+    #if ANA_AUGER_CURRENT != ABSENT
+      PrintColumn("AugerCurrent");
+      PrintColumn("AugerLevel");
+    #endif
+    #if ANA_FUEL_SWITCH != ABSENT
+      PrintColumn("FuelSwitchLevel");
+    #endif
   } else {
-    PrintColumnInt(AugerCurrentValue);
-    PrintColumn(AugerCurrentLevel[AugerCurrentLevelName]);
+    #if ANA_AUGER_CURRENT != ABSENT
+      PrintColumnInt(AugerCurrentValue);
+      PrintColumn(AugerCurrentLevel[AugerCurrentLevelName]);
+    #endif
+    #if ANA_FUEL_SWITCH != ABSENT
+      PrintColumn(FuelSwitchLevel[FuelSwitchLevelName]);
+    #endif
   }
 }
-
-void LogEnergy(boolean header = false) {
-  if (header) {
-    PrintColumn("Vrmsave");
-    PrintColumn("Irms1ave");
-    PrintColumn("Irms2ave");
-    PrintColumn("realPower1ave");
-    PrintColumn("realPower2ave");
-    PrintColumn("apparentPower1ave");
-    PrintColumn("apparentPower2ave");
-  } else {
-    PrintColumn(Vrmsave);
-    PrintColumn(Irms1ave);
-    PrintColumn(Irms2ave);
-    PrintColumnInt(realPower1ave);
-    PrintColumnInt(realPower2ave);
-    PrintColumnInt(apparentPower1ave);
-    PrintColumnInt(apparentPower2ave);
-  }
-}
-
+ 
 void LogPulseEnergy(boolean header = false) {
   if (header) {
     PrintColumn("Power");
@@ -208,14 +229,44 @@ void LogHertz(boolean header = false) {
   }
 }
 
+void LogCounterHertz(boolean header = false) {
+  if (header) {
+    PrintColumn("Blower PWM");
+  } else {
+    PrintColumnInt(counter_hertz);
+  }
+}
+
 void LogGovernor(boolean header=false) {
     if (header) {
       PrintColumn("ThrottlePercent");
       PrintColumn("ThrottleAngle");
+      PrintColumn("Gov_P");
+      PrintColumn("Gov_I");
+      PrintColumn("Gov_D");
     } else {
-      PrintColumn(governor_output);
-      PrintColumn(servo2_pos);
+      PrintColumnInt(governor_output);
+      PrintColumnInt(Servo_Throttle.read());
+      PrintColumnInt(governor_PID.GetP_Param());
+      PrintColumnInt(governor_PID.GetI_Param());
+      PrintColumnInt(governor_PID.GetD_Param());
     }
+}
+
+void LogEngine(boolean header=false) {
+  if (header) {
+    PrintColumn("Engine");
+  } else {
+    if (engine_state == ENGINE_OFF) {
+      PrintColumn("Off");
+    }
+    if (engine_state == ENGINE_ON) {
+      PrintColumn("On");
+    }
+    if (engine_state == ENGINE_STARTING) {
+      PrintColumn("Starting");
+    }
+  }
 }
 
 void LogBatteryVoltage(boolean header=false) {
@@ -223,6 +274,18 @@ void LogBatteryVoltage(boolean header=false) {
       PrintColumn("battery_voltage");
     } else {
       PrintColumn(battery_voltage);
+    }
+}
+
+void LogReactor(boolean header=false) {
+    if (header) {
+      PrintColumn("P_reactorLevel");
+      PrintColumn("T_tredLevel");
+      PrintColumn("T_bredLevel");
+    } else {
+      PrintColumn(P_reactorLevel[P_reactorLevelName]);
+      PrintColumn(T_tredLevel[TempLevelName]);
+      PrintColumn(T_bredLevel[TempLevelName]);
     }
 }
 
@@ -257,10 +320,13 @@ void DoDatalogging() {
   LogPID(header);
   //LogEnergy(header);
   LogAuger(header);
-  LogHertz(header);
+  //LogHertz(header);
+  //LogCounterHertz(header);
   //LogGovernor(header);
-  LogPulseEnergy(header);
-  LogBatteryVoltage(header);
+  //LogPulseEnergy(header);
+  //LogBatteryVoltage(header);
+  LogReactor(header);
+  LogEngine(header);
   Serial.println();
   lineCount++;
 }
