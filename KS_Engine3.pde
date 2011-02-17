@@ -323,9 +323,28 @@ int auger_on_length = 0;
 int auger_off_length = 0;
 unsigned int auger_on_alarm_point = 300;
 unsigned int auger_off_alarm_point = 900;
-boolean alarm;
+int alarm;
 int alarm_interval = 5; // in seconds
 int pressureRatioAccumulator = 0;
+#define ALARM_NONE 0 //no alarm
+#define ALARM_AUGER_ON_LONG 1
+#define ALARM_AUGER_OFF_LONG 2
+#define ALARM_BAD_REACTOR 3
+#define ALARM_BAD_FILTER 4
+#define ALARM_LOW_FUEL_REACTOR 5
+#define ALARM_HIGH_TRED 6
+#define ALARM_HIGH_BRED 7
+char* display_alarm[] = {
+  "No alarm           ",
+  "Auger on too long  ",
+  "Auger off too long ",
+  "Bad Reactor P_ratio",
+  "Bad Filter P_ratio ",
+  "Reactor Fuel Low   ",
+  "tred low for eng.  ",
+  "bred high for eng. "
+}; //20 char message for 4x20 display
+
 
 void setup() {
   GCU_Setup(V3,FULLFILL,P777222);

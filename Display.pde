@@ -1,44 +1,74 @@
 void DoDisplay() {
+  boolean disp_alt; // Var for alternating value display
+  if (millis() % 2000 > 1000) {
+    disp_alt = false;
+  } else {
+    disp_alt = true;
+  }
   switch (display_state) {
     case DISPLAY_SPLASH:
+        //Row 0
 	Disp_RC(0,0);
 	if (GCU_version == V2) {
 	Disp_PutStr("   KS GCU V 2.02    ");
 	} else if (GCU_version == V3) {
 	Disp_PutStr("    KS PCU V 3.02    ");
 	}
+        //Row 1
 	Disp_RC(1,0);
 	Disp_PutStr("www.allpowerlabs.org");
+        //Row 2
 	Disp_RC(2,0);
 	Disp_PutStr("    (C) APL 2010    ");
+        //Row 3
 	Disp_RC(3,0);
 	Disp_PutStr("                    ");
 	Disp_CursOff();
+        //Transition out after delay
         if (millis()-display_state_entered>2000) {
           TransitionDisplay(DISPLAY_REACTOR);
         }
       break;
     case DISPLAY_REACTOR:
       char buf[20];
+      //Row 0
       Disp_RC(0, 0);
-      sprintf(buf, "Ttred%4ld  ", Temp_Data[T_TRED]);
+      if (disp_alt) {
+        sprintf(buf, "Ttred%4ld  ", Temp_Data[T_TRED]);
+      } else {
+        sprintf(buf, "Ttred%s", T_tredLevel[TempLevelName]);
+      }
       Disp_PutStr(buf);
       Disp_RC(0, 11);
       sprintf(buf, "Pcomb%4ld", Press_Data[P_COMB] / 25);
       Disp_PutStr(buf);
       
+      //Row 1
       Disp_RC(1, 0);
-      sprintf(buf, "Tbred%4ld  ", Temp_Data[T_BRED]);
+      if (disp_alt) {
+        sprintf(buf, "Tbred%4ld  ", Temp_Data[T_BRED]);
+      } else {
+        sprintf(buf, "Tbred%s", T_bredLevel[TempLevelName]);
+      }
       Disp_PutStr(buf);
       Disp_RC(1, 11);
       sprintf(buf, "Preac%4ld", Press_Data[P_REACTOR] / 25);
       Disp_PutStr(buf);
       
+      //Row 2
       Disp_RC(2,0);
       if (Press_Data[P_REACTOR] < -500) {
-        sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
+        //the value only means anything if the pressures are high enough, otherwise it is just noise
+        if (disp_alt) {
+          sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
+        } else {
+          if (pRatioFilterHigh) {
+            sprintf(buf, "Pfilt  Bad");
+          } else {
+            sprintf(buf, "Pfilt Good");
+          }
+        }
         Disp_PutStr(buf);
-   
       } else {
         Disp_PutStr("Prati  --  ");
       }
