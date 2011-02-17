@@ -1,6 +1,6 @@
 // Flow
 void InitFlow() {
-  if (P_Q_AIR_ENG != NULL | P_Q_AIR_RCT != NULL | P_Q_GAS_ENG != NULL) {
+  if (P_Q_AIR_ENG != ABSENT | P_Q_AIR_RCT != ABSENT | P_Q_GAS_ENG != ABSENT) {
     flow_active = true;
   } else {
     flow_active = false;
