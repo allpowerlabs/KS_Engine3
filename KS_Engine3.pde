@@ -17,23 +17,33 @@
 #include <util.h>           // part of KSlibs, utility functions, GCU_Setup
 #include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
 
+#define ABSENT -500
+//#include <SdFat.h>
+//#include <SdFatUtil.h> 
+//#include <ctype.h>
+
 // Analog Input Mapping
 #define ANA_LAMBDA ANA0
+#define ANA_FUEL_SWITCH ANA1
 #define ANA_ENGINE_SWITCH ANA2
-#define ANA_FUEL_SWITCH NULL
-#define ANA_AUGER_CURRENT ANA1  //sense current in auger motor
-#define ANA_V NULL
-#define ANA_CT_LEG1 NULL
-#define ANA_CT_LEG2 NULL
-#define ANA_BATT_V ANA3
+#define ANA_BLOWER_DIAL ANA3
+#define ANA_AUGER_CURRENT ABSENT  //sense current in auger motor
+#define ANA_BATT_V ABSENT
+#define ANA_V ABSENT
+#define ANA_CT_LEG1 ABSENT
+#define ANA_CT_LEG2 ABSENT
 
 // FET Mapping
-#define FET_IGNITION FET7
-#define FET_STARTER FET5
-#define FET_GRATE FET6
-#define FET_ALARM FET0
-#define FET_FLARE FET4
-#define FET_AUGER FET1
+#define FET_AUGER FET0
+#define FET_GRATE FET1
+#define FET_IGNITION FET2
+#define FET_STARTER FET3
+#define FET_FLARE_IGNITOR FET4
+//FET5
+#define FET_ALARM FET6
+//FET7
+#define FET_BLOWER ABSENT
+
 
 //Servo Mapping
 #define SERVO_MIXTURE SERVO0
@@ -42,21 +52,22 @@
 //Thermocouple Mappings
 #define T_BRED 1
 #define T_TRED 0
-#define T_PYRO_IN 2
-#define T_PYRO_OUT 3
-#define T_COMB NULL
-#define T_REACTOR_GAS_OUT NULL
-#define T_DRYING_GAS_OUT NULL
-#define T_FILTER NULL
-//#define T_LOW_FUEL NULL
+#define T_PYRO_IN ABSENT
+#define T_PYRO_OUT ABSENT
+#define T_COMB ABSENT
+#define T_REACTOR_GAS_OUT ABSENT
+#define T_DRYING_GAS_OUT ABSENT
+#define T_FILTER ABSENT
+#define T_ENG_COOLANT ABSENT
+#define T_LOW_FUEL ABSENT
 
 //Pressure Mapping
 #define P_REACTOR 0
 #define P_COMB 4
 #define P_FILTER 1
-#define P_Q_AIR_ENG 5
-#define P_Q_AIR_RCT NULL
-#define P_Q_GAS_ENG NULL
+#define P_Q_AIR_ENG ABSENT
+#define P_Q_AIR_RCT ABSENT
+#define P_Q_GAS_ENG ABSENT
 
 //Interrupt Mapping
 // 2 - pin 21 - PD0
