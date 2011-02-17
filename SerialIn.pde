@@ -1,86 +1,69 @@
 // SerialIn
 void DoSerialIn() {
   int incomingByte = 0;
-  double p,i,d;
-  double p_d =0.02;
-  double i_d = 0.02;
-  double d_d = 0.02;
+   PID &v_PID = lambda_PID;
+   double p,i,d;
+    double p_d =0.02;
+    double i_d = 0.02;
+    double d_d = 0.02;
   // Serial input
   if (Serial.available() > 0) {
-<<<<<<< Updated upstream
-    p=governor_P[0];
-    i=governor_I[0];
-    d=governor_D[0];
-=======
-    p=lambda_P[0];
-    i=lambda_I[0];
-    d=lambda_D[0];
->>>>>>> Stashed changes
+    p=v_PID.GetP_Param();
+    i=v_PID.GetI_Param();
+    d=v_PID.GetD_Param();
     serial_last_input = Serial.read();
     switch (serial_last_input) {
     case 'p':
       PrintLambdaUpdate(p,i,d,p+p_d,i,d);
       p=p+p_d;
-      governor_P[0]=p;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'P':
       PrintLambdaUpdate(p,i,d,p-p_d,i,d);
       p=p-p_d;
-      governor_P[0]=p;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'i':
       PrintLambdaUpdate(p,i,d,p,i+i_d,d);
       i=i+i_d;
-      governor_I[0]=i;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'I':
       PrintLambdaUpdate(p,i,d,p,i-i_d,d);
       i=i-i_d;
-      governor_I[0]=i;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'd':
       PrintLambdaUpdate(p,i,d,p,i,d+d_d);
       d=d+d_d;
-      governor_D[0]=d;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'D':
       PrintLambdaUpdate(p,i,d,p,i,d-d_d);
       d=d-d_d;
-      governor_D[0]=d;
-      lamba_updated_time = millis();
-      write_lambda = true;
+      v_PID.SetTunings(p,i,d);
       break;
     case 'c':
       CalibratePressureSensors();
       LoadPressureSensorCalibration();
       break;
     case 's':
-      servo1_pos += 10;
+      Servo_Calib.write(Servo_Calib.read()+10);
       Serial.print("#Servo1 (degrees) now:");
-      Serial.println(servo1_pos);
+      Serial.println(Servo_Calib.read());
       break;
     case 'S':
-      servo1_pos -= 10;
+      Servo_Calib.write(Servo_Calib.read()-10);
       Serial.print("#Servo1 (degrees) now:");
-      Serial.println(servo1_pos);
+      Serial.println(Servo_Calib.read());
       break;
     case 'l':
-      lambda_setpoint += 0.01;
+      lambda_setpoint += 0.1;
       Serial.print("#Lambda Setpoint now:");
       Serial.println(lambda_setpoint);
       break;
     case 'L':
-      lambda_setpoint -= 0.01;
+      lambda_setpoint -= 0.1;
       Serial.print("#Lambda Setpoint now:");
       Serial.println(lambda_setpoint);
       break;
@@ -130,12 +113,16 @@ void DoSerialIn() {
       Serial.print("#Grate Min Interval now:");
       Serial.println(grate_min_interval);
       break;   
+    case 'e':
+      TransitionEngine(ENGINE_GOV_TUNING);
+      break;  
     }
   }
+  
 }
 
 void PrintLambdaUpdate(double P, double I, double D, double nP, double nI, double nD) {
-  Serial.print("#Updating Lambda PID from [");
+  Serial.print("#Updating PID from [");
   Serial.print(P);
   Serial.print(",");
   Serial.print(I);
