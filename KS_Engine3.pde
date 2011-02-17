@@ -139,7 +139,7 @@ int m_grate_on;
 float pRatioReactor;
 enum pRatioReactorLevels { GOOD = 0,BAD = 1} pRatioReactorLevel;
 static char *pRatioReactorLevelName[] = { "Low", "High" };
-float pRatioReactorLevelBoundary[2][2] = { { 0.9, 0.3 }, {0.3, 0.0} };
+float pRatioReactorLevelBoundary[2][2] = { { 0.3, 0.9 }, {0.0, 0.3} };
 
 // Filter pressure ratio
 float pRatioFilter;
