@@ -3,13 +3,14 @@
 // Developed for the APL GCU/PCU: http://gekgasifier.pbworks.com/Gasifier-Control-Unit
 
 #include <EEPROM.h>         // included with Arduino, can read/writes to non-volatile memory
+#include <Servo.h>          // Arduino's native servo library
 #include <PID_Beta6.h>      // http://www.arduino.cc/playground/Code/PIDLibrary, http://en.wikipedia.org/wiki/PID_controller
 #include <adc.h>            // part of KSlibs, for reading analog inputs
 #include <display.h>        // part of KSlibs, write to display
 #include <fet.h>            // part of KSlibs, control FETs (field effect transitor) to drive motors, solenoids, etc
 #include <keypad.h>         // part of KSlibs, read buttons and keypad
 #include <pressure.h>       // part of KSlibs, read pressure sensors
-#include <servo.h>          // part of KSlibs, not implemented
+#include <servos.h>          // part of KSlibs, not implemented
 #include <temp.h>           // part of KSlibs, read thermocouples
 #include <timer.h>          // part of KSlibs, not implemented
 #include <ui.h>             // part of KSlibs, menu
