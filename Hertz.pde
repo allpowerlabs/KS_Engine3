@@ -16,14 +16,8 @@ double CalculatePeriodHertz() {
     }
 }
 
-//Timer Code (Hertz Measurement)
-void DoHertz() {
-  hertz = int(Timer2_Read());
-  Timer2_Reset();
-}
-
-//Timer
-void Timer2_Init() {
+//CounterHertz - Using hardware counter
+void InitCounterHertz() {
   unsigned long time;
   // assumptions:
   //  TC2 is in mode 0 ("normal mode")  (this is true at processor reset)
@@ -49,12 +43,7 @@ void Timer2_Init() {
   TIFR2 = 0x00;
 }
 
-void Timer2_Reset() {
+void DoCounterHertz() {
+  counter_hertz = int(TCNT2);
   TCNT2 = 0x00;
-  // while (ASSR & 0x10) ;    // see warning above
-  //while (ASSR & 0x1f & microseconds()-time < 1000);
-}
-
-unsigned char Timer2_Read() {
-  return TCNT2;
 }
