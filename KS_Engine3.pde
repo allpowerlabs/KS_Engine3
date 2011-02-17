@@ -99,6 +99,7 @@ Servo Servo_Throttle;
 #define GRATE_SHAKE_INIT 32000
 
 //Control States
+//TODO: Use these for auto-start/shutdown sequence (e.g. equivalent to a backup generator command)
 #define CONTROL_OFF 0
 #define CONTROL_START 1
 #define CONTROL_ON 2
@@ -107,6 +108,14 @@ Servo Servo_Throttle;
 #define ENGINE_OFF 0
 #define ENGINE_ON 1
 #define ENGINE_STARTING 2
+#define ENGINE_GOV_TUNING 3
+
+//Flare States
+#define FLARE_OFF 0
+#define FLARE_USER_SET 1
+#define FLARE_LOW 2
+#define FLARE_HIGH 3
+#define FLARE_MAX 4
 
 //Lambda States
 #define LAMBDA_CLOSEDLOOP 0
@@ -130,7 +139,7 @@ int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger 
 int grate_max_interval = 5*60; //longest total interval in seconds
 int grate_min_interval = 60;
 int grate_on_interval = 2;
-//define these in setup, how much to remove from grate_val each cycle [1 second] (slope)
+//define these in init, how much to remove from grate_val each cycle [1 second] (slope)
 int m_grate_low; 
 int m_grate_high;
 int m_grate_on;
@@ -147,35 +156,36 @@ boolean pRatioFilterHigh;
 int filter_pratio_accumulator;
 
 // Temperature Levels
+#define TEMP_LEVEL_COUNT 5
 enum TempLevels { COLD = 0,COOL = 1,WARM = 2 ,HOT = 3, EXCESSIVE = 4};
 TempLevels T_tredLevel;
 static char *TempLevelName[] = { "Cold", "Cool", "Warm", "Hot", "Too Hot" };
-int T_tredLevelBoundary[5][2] = { { 0, 40 }, {50, 80}, {300,600}, {800,950}, {1000,1250} };
+int T_tredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790}, {800,950}, {1000,1250} };
 
 TempLevels T_bredLevel;
-int T_bredLevelBoundary[5][2] = { { 0, 40 }, {50, 80}, {300,600}, {800,950}, {1000,1250} };
+int T_bredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790}, {800,950}, {1000,1250} };
 
 //Pressure Levels
+#define P_REACTOR_LEVEL_COUNT 4
 enum P_reactorLevels { OFF = 0, LITE = 1, MEDIUM = 2 , EXTREME = 3} P_reactorLevel;
 static char *P_reactorLevelName[] = { "Off", "Low", "Medium", "High"};
-int P_reactorBoundary[4][2] = { { 0, 50 }, {50, 500}, {750,2000}, {2000,4000} };
+int P_reactorLevelBoundary[4][2] = { { -50, 0 }, {-500, -50}, {-2000,-750}, {-4000,-2000} };
 
 //Auger Switch Levels
-#if ANA_FUEL_SWITCH != NULL
+#if ANA_FUEL_SWITCH != ABSENT
 int FuelSwitchValue = 0;
 enum FuelSwitchLevels { SWITCH_OFF = 0, SWITCH_ON = 1} FuelSwitchLevel;
-int FuelSwitchLevelBoundary[2][2] = {{ 0, 200 }, {800, 1024}};
+static char *FuelSwitchLevelName[] = { "Off","On"};
+//int FuelSwitchLevelBoundary[2][2] = {{ 0, 200 }, {800, 1024}};
 #endif
 
 //Auger Current Levels
-#if ANA_AUGER_CURRENT != NULL
+#if ANA_AUGER_CURRENT != ABSENT
 int AugerCurrentValue = 0; // current level in mA
 enum AugerCurrentLevels { AUGER_OFF = 0, AUGER_ON = 1, AUGER_HIGH = 2} AugerCurrentLevel;
 static char *AugerCurrentLevelName[] = { "Off","On", "High"};
-int AugerCurrentLevelBoundary[3][2] = { { 0, 500}, {500, 5000}, {5000,20000} };
+int AugerCurrentLevelBoundary[3][2] = { { 0, 1200}, {1200, 5000}, {5000,20000} };
 #endif
-
-
 
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
 //TO DO: move loops to hardware timer and interrupt based control, figure out interrupt prioritization
@@ -191,8 +201,22 @@ unsigned long nextTime3;
 //Control
 int control_state = CONTROL_OFF;
 
+//Flare
+int flare_state = FLARE_USER_SET;
+boolean ignitor_on;
+int blower_dial = 0;
+double blower_setpoint;
+double blower_input;
+double blower_output;
+double blower_value;
+double blower_P[1] = {2}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double blower_I[1] = {.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double blower_D[1] = {0.0}; //Unless you know what it's for, don't use D
+PID blower_PID(&blower_input, &blower_output, &blower_setpoint,blower_P[0],blower_I[0],blower_D[0]);
+
 //Engine
 int engine_state = ENGINE_OFF;
+unsigned long engine_state_entered;
 unsigned long engine_end_cranking;
 int engine_crank_period = 10000; //length of time to crank engine before stopping (milliseconds)
 double battery_voltage;
@@ -208,6 +232,10 @@ int key;
 double hertz = 0;
 volatile unsigned long hertz_last_interrupt;
 volatile int hertz_period;
+
+//Counter Hertz
+int counter_hertz = 0;
+
 
 //Energy Pulse
 double power = 0;
