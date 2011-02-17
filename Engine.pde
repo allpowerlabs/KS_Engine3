@@ -4,6 +4,7 @@ void DoEngine() {
       if (control_state == CONTROL_START) {
         TransitionEngine(ENGINE_STARTING);
       }
+      SetThrottleAngle(0);
       break;
     case ENGINE_ON:
       if (control_state == CONTROL_OFF) {
@@ -11,6 +12,10 @@ void DoEngine() {
       }
       if (control_state == CONTROL_START) {
         TransitionEngine(ENGINE_STARTING);
+      }
+      DoGovernor();
+      if (P_reactorLevel == OFF & millis()-engine_state_entered > 10000) { //if reactor is at low vacuum after ten seconds, engine did not catch, so turn off
+        TransitionEngine(ENGINE_OFF);
       }
 //      #ifdef INT_HERTZ
 //      if (CalculatePeriodHertz() < 20) { // Engine is not on
@@ -22,6 +27,7 @@ void DoEngine() {
       if (control_state == CONTROL_OFF) {
         TransitionEngine(ENGINE_OFF);
       }
+      SetThrottleAngle(100); // % open
 //      #ifdef INT_HERTZ
 //        // Use RPM detection to stop cranking automatically
 //        if (CalculatePeriodHertz() > 40) { //if engine is caught, stop cranking
@@ -37,11 +43,17 @@ void DoEngine() {
         }
 //      #endif
       break;
+     case ENGINE_GOV_TUNING:
+      if (control_state == CONTROL_OFF) {
+        TransitionEngine(ENGINE_OFF);
+      }
+      break;
   }
 }
 
 void TransitionEngine(int new_state) {
   //can look at engine_state for "old" state before transitioning at the end of this method
+  engine_state_entered = millis();
   switch (new_state) {
     case ENGINE_OFF:
       analogWrite(FET_IGNITION,0);
@@ -59,6 +71,11 @@ void TransitionEngine(int new_state) {
       engine_end_cranking = millis() + engine_crank_period;
       Serial.println("# New Engine State: Starting");
       break;
+    case ENGINE_GOV_TUNING:
+      analogWrite(FET_IGNITION,255);
+      analogWrite(FET_STARTER,0);
+      Serial.println("# New Engine State: Governor Tuning");
+      break;
   }
   engine_state=new_state;
 }
@@ -75,17 +92,17 @@ void InitGovernor() {
   governor_PID.SetMode(AUTO);
   governor_PID.SetSampleTime(20);
   governor_PID.SetInputLimits(0,60);
-  governor_PID.SetOutputLimits(throttle_valve_closed,throttle_valve_open);
+  governor_PID.SetOutputLimits(0,100);
   governor_output = 0;
 }
 
 void SetThrottleAngle(double percent) {
- //servo2_pos = throttle_valve_closed + percent*(throttle_valve_open-throttle_valve_closed);
- servo2_pos = percent;
+ Servo_Throttle.write(throttle_valve_closed + percent*(throttle_valve_open-throttle_valve_closed));
+ //servo2_pos = percent;
 }
 
 void DoBattery() {
-  #if ANA_BATT_V != NULL
+  #if ANA_BATT_V != ABSENT
   battery_voltage = 0.07528*(analogRead(ANA_BATT_V)-512);
   #endif
 }
