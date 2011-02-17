@@ -46,8 +46,14 @@
 
 
 //Servo Mapping
+//TODO: Use these define
 #define SERVO_MIXTURE SERVO0
 #define SERVO_CALIB SERVO1
+#define SERVO_THROTTLE SERVO2
+
+Servo Servo_Mixture;
+Servo Servo_Calib;
+Servo Servo_Throttle;
 
 //Thermocouple Mappings
 #define T_BRED 1
@@ -262,7 +268,7 @@ double air_rct_flow;
 double gas_eng_flow;
 boolean flow_active; // are any flowmeters hooked up?
 
-//Servo 
+//Servos
 int servo_alt = 0; //used to pulse every other time through loop (~20 ms)
 
 //Servo0
