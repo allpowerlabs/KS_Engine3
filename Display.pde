@@ -65,13 +65,14 @@ void DoDisplay() {
         Disp_PutStr("Prati  --  ");
       }
       Disp_RC(2, 11);
-      if (disp_alt) {
+      if (true) {
         sprintf(buf, "Pfilt%4ld", Press_Data[P_FILTER] / 25);
       } else {
+        //TO DO: Implement filter warning
         if (pRatioFilterHigh) {
-          sprintf(buf, "Pfilt  Bad");
+          sprintf(buf, "Pfilt Bad");
         } else {
-          sprintf(buf, "Pfilt Good");
+          sprintf(buf, "PfiltGood");
         }
       }
       Disp_PutStr(buf);
