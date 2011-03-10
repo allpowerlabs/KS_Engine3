@@ -354,7 +354,7 @@ char sd_in_char=0;
 int sd_index=0;  
 
 void setup() {
-  GCU_Setup(V3,FULLFILL,P777222);
+  GCU_Setup(V3,FULLFILL,P777722);
   //
   DDRJ |= 0x80;      
   PORTJ |= 0x80;   
