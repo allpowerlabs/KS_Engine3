@@ -342,6 +342,16 @@ char* display_alarm[] = {
   "bred high for eng. "
 }; //20 char message for 4x20 display
 
+// SD Card
+//Sd2Card sd_card;
+//SdVolume sd_volume;
+//SdFile sd_root;
+//SdFile sd_file;
+
+char sd_file_name[] = "Test.txt";     //Create an array that contains the name of our file.
+char sd_contents[256];           //This will be a data buffer for writing contents to the file.
+char sd_in_char=0;
+int sd_index=0;  
 
 void setup() {
   GCU_Setup(V3,FULLFILL,P777222);
