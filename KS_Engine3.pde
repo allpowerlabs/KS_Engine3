@@ -169,7 +169,7 @@ int T_bredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790},
 #define P_REACTOR_LEVEL_COUNT 4
 enum P_reactorLevels { OFF = 0, LITE = 1, MEDIUM = 2 , EXTREME = 3} P_reactorLevel;
 static char *P_reactorLevelName[] = { "Off", "Low", "Medium", "High"};
-int P_reactorLevelBoundary[4][2] = { { -50, 0 }, {-500, -50}, {-2000,-750}, {-4000,-2000} };
+int P_reactorLevelBoundary[4][2] = { { -100, 0 }, {-500, -50}, {-2000,-750}, {-4000,-2000} };
 
 //Auger Switch Levels
 #if ANA_FUEL_SWITCH != ABSENT
