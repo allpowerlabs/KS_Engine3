@@ -315,7 +315,7 @@ float servo2_db = 0; // used to deadband the servo movement
 char serial_last_input = '\0'; // \0 is the ABSENT character
 
 // Alarm
-boolean auger_on =false;
+boolean auger_on = false;
 int auger_on_length = 0;
 int auger_off_length = 0;
 unsigned int auger_on_alarm_point = 300;
@@ -357,8 +357,22 @@ void setup() {
   GCU_Setup(V3,FULLFILL,P777722);
   //
   DDRJ |= 0x80;      
-  PORTJ |= 0x80;   
-  delay(1);	
+  PORTJ |= 0x80;
+  
+  //TODO: Check attached libraries, FET6 seemed to be set to non-OUTPUT mode
+  //set all FET pins to output
+  pinMode(FET0,OUTPUT);
+  pinMode(FET1,OUTPUT);
+  pinMode(FET2,OUTPUT);
+  pinMode(FET3,OUTPUT);
+  pinMode(FET4,OUTPUT);
+  pinMode(FET5,OUTPUT);
+  pinMode(FET6,OUTPUT);
+  pinMode(FET7,OUTPUT);
+  
+  //pinMode(FET_BLOWER,OUTPUT); //TODO: Move into library (set PE0 to output)
+  //digitalWrite(FET_BLOWER,HIGH);
+  //delay(50);	
   
   // timer initialization
   nextTime0 = millis() + loopPeriod0;
@@ -377,9 +391,8 @@ void setup() {
   Temp_Init();
   Press_Init();
   Fet_Init();
-  Servo_Init();
+  //Servo_Init();
   Timer_Init();
-  Timer2_Init();
 
   Disp_Reset();
   Kpd_Reset();
@@ -388,19 +401,20 @@ void setup() {
   Temp_Reset();
   Press_Reset();
   Fet_Reset();
-  Servo_Reset();
+  //Servo_Reset();
   Timer_Reset();
-  Timer2_Reset();
   
+  InitServos();
   InitGrate();  
   InitPeriodHertz(); //attach interrupt
-  InitGovernor();
+  InitCounterHertz();
+  //InitGovernor();
   InitPulseEnergyMonitoring();
+//  InitSD();
   
   TransitionEngine(ENGINE_ON); //default to engine on. if PCU resets, don't shut a running engine off. in the ENGINE_ON state, should detect and transition out of engine on.
   TransitionLambda(LAMBDA_CLOSEDLOOP);
   TransitionDisplay(DISPLAY_SPLASH);
-  
 }
 
 void loop() {
@@ -414,32 +428,27 @@ void loop() {
     DoFlow();
     DoSerialIn();
     DoLambda();
-    DoGovernor();
+    //DoGovernor();
     DoControlInputs();
     DoEngine();
-    DoServos();
+    //DoServos();
     DoFlare();
+    DoReactor();
     DoAuger();
     DoBattery();
     DoKeyInput();
+    DoCounterHertz();
     DoHeartBeat(); // blink heartbeat LED
+    //TODO: Add OpenEnergyMonitor Library
     if (millis() >= nextTime2) {
       DoDisplay();
-      MeasureElectricalPower();
-      accumulateEnergyValues();
       if (millis() >= nextTime1) {
         nextTime1 += loopPeriod1;
-        averageEnergyValues();
-        //DoHertz();
         DoGrate();
         DoFilter();
         DoDatalogging();
+//      DoDatalogSD();
         DoAlarmUpdate();
-        if (alarm == true) {
-          analogWrite(FET_ALARM, 255);
-        } else {
-          analogWrite(FET_ALARM,0);
-        }
         if (millis() >= nextTime0) {
           nextTime0 += loopPeriod0;
           DoAlarm();
@@ -448,4 +457,3 @@ void loop() {
     }
   }
 }
-
