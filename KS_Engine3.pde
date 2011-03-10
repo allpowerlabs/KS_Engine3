@@ -247,9 +247,9 @@ volatile int energy_period;
 // Servo Valve Calibration - will vary depending on the servo valve
 //PP #2 (now upgraded to #7)
 //TO DO: Move to % based on open/closed instead of degrees
-double premix_valve_open = 120; //calibrated angle for servo valve open
-double premix_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
-double premix_valve_max = 0.50;  //minimum of range for closed loop operation (percent open)
+double premix_valve_open = 180; //calibrated angle for servo valve open
+double premix_valve_closed = 105; //calibrated angle for servo valve closed (must be smaller value than open)
+double premix_valve_max = 1.0;  //minimum of range for closed loop operation (percent open)
 double premix_valve_min = 0.00; //maximum of range for closed loop operation (percent open)
 double premix_valve_center = 0.00; //initial value when entering closed loop operation (percent open)
 double lambda_setpoint;
@@ -257,8 +257,8 @@ double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.0};
-double lambda_P[1] = {0.1}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
-double lambda_I[1] = {0.16}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double lambda_P[1] = {0.25}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double lambda_I[1] = {2.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
 double lambda_D[1] = {0.0}; //Unless you know what it's for, don't use D
 PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambda_I[0],lambda_D[0]);
 unsigned long lamba_updated_time;
@@ -268,8 +268,8 @@ int lambda_state;
 unsigned long lambda_state_entered;
 
 //Governor
-  //throttle open - 83°
-  //closed - 0°
+//throttle open - 83°
+//closed - 0°
 double throttle_valve_open = 83; //calibrated angle for servo valve open
 double throttle_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
 //double throttle_valve_max = 1.00;  //minimum of range for closed loop operation (percent open)
