@@ -311,55 +311,6 @@ float servo1_db = 0; // used to deadband the servo movement
 float servo2_pos;
 float servo2_db = 0; // used to deadband the servo movement
 
-//Open Energy Monitoring Variables
-//Setup variables
-int numberOfSamples = 0;
-//Calibration coeficients (ref/calculated * calib. coefficient)
-double VCAL = 0.52;
-double ICAL1 = 0.151630734;
-double ICAL2 = 0.14774915;
-double PHASECAL = 2.3; //add two for I1 and I2. found by matching w/ code. shifting value and hitting calibrated power factor.
-
-//Sampling variables
-int lastSampleV,sampleV;
-int lastSampleI1,sampleI1;
-int lastSampleI2,sampleI2;
-//Filter variables
-double lastFilteredV,filteredV;
-double lastFilteredI1, filteredI1;
-double lastFilteredI2, filteredI2;
-//Stores the phase calibrated instantaneous voltage.
-double calibratedV;
-//Power calculation variables
-double sqV,sumV;
-double sqI1,instP1,sumI1,sumP1;
-double sqI2,instP2,sumI2,sumP2;
-//Useful value variables
-double realPower1,
-       apparentPower1,
-       powerFactor1,
-       Vrms,
-       Irms1;
-//Useful value variables
-double realPower2,
-       apparentPower2,
-       powerFactor2,
-       Irms2;
-// averages
-int power_ave_i;
-double realPower1sum, apparentPower1sum,powerFactor1sum,Irms1sum;
-double realPower2sum, apparentPower2sum,powerFactor2sum,Irms2sum;
-double Vrmssum;
-double realPower1ave, apparentPower1ave,powerFactor1ave,Irms1ave;
-double realPower2ave, apparentPower2ave,powerFactor2ave,Irms2ave;
-double Vrmsave;
-//Whole phase check variables
-int startV;
-bool lastVCross, checkVCross;
-int crossCount;
-unsigned long start,tlength;
-double frequency;
-
 //Serial
 char serial_last_input = '\0'; // \0 is the ABSENT character
 
