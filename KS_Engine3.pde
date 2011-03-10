@@ -176,7 +176,7 @@ int P_reactorLevelBoundary[4][2] = { { -100, 0 }, {-500, -50}, {-2000,-750}, {-4
 int FuelSwitchValue = 0;
 enum FuelSwitchLevels { SWITCH_OFF = 0, SWITCH_ON = 1} FuelSwitchLevel;
 static char *FuelSwitchLevelName[] = { "Off","On"};
-//int FuelSwitchLevelBoundary[2][2] = {{ 0, 200 }, {800, 1024}};
+//int FuelSwitchLevelBoundary[2][2] = {{ 0, 200 }, {800, 1024}}; //not currently used
 #endif
 
 //Auger Current Levels
@@ -361,7 +361,7 @@ unsigned long start,tlength;
 double frequency;
 
 //Serial
-char serial_last_input = '\0'; // \0 is the NULL character
+char serial_last_input = '\0'; // \0 is the ABSENT character
 
 // Alarm
 boolean auger_on =false;
