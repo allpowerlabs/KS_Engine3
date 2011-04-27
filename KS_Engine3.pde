@@ -163,7 +163,7 @@ static char *TempLevelName[] = { "Cold", "Cool", "Warm", "Hot", "Too Hot" };
 int T_tredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790}, {800,950}, {1000,1250} };
 
 TempLevels T_bredLevel;
-int T_bredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790}, {800,950}, {1000,1250} };
+int T_bredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,740}, {750,900}, {950,1250} };
 
 //Pressure Levels
 #define P_REACTOR_LEVEL_COUNT 4

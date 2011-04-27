@@ -31,7 +31,7 @@ void DoReactor() {
     }
   }
   for(int i = 0; i < TEMP_LEVEL_COUNT; i++) {
-    if (Temp_Data[T_BRED] > T_tredLevelBoundary[i][0] && Temp_Data[T_BRED] < T_tredLevelBoundary[i][1]) {
+    if (Temp_Data[T_BRED] > T_bredLevelBoundary[i][0] && Temp_Data[T_BRED] < T_bredLevelBoundary[i][1]) {
       T_bredLevel = (TempLevels) i;
     }
   }
