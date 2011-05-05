@@ -14,7 +14,7 @@ void DoControlInputs() {
 //    control_state = CONTROL_ON;
 //  }
   if (abs(control_input-10)<20) { //"engine off"
-    control_state = CONTROL_OFF;
+    control_state = CONTROL_OFF; 
   }
   if (abs(control_input-1023)<20) { //"engine off"
     control_state = CONTROL_OFF;

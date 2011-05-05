@@ -1,4 +1,8 @@
 // Lambda
+void InitLambda() {
+  LoadLambda();
+}
+
 void DoLambda() {
     switch(lambda_state) {
       case LAMBDA_CLOSEDLOOP:
@@ -129,17 +133,32 @@ void SetPremixServoAngle(double percent) {
 }
 
 void WriteLambda() {
-  //0-8 for P_calib
-  EEPROM.write(9, lambda_P[0]*20+128); // stores -6.4 -> 6.4 at 0.05 resolution
-  EEPROM.write(10, lambda_I[0]*20+128);
-  EEPROM.write(11, lambda_D[0]*20+128);
+  // Write setpoint
+  lambda_setpoint_mode[0] = lambda_setpoint;
+  EEPROM.write(9,128);
+  EEPROM.write(10, map(lambda_setpoint_mode[0],0.5,1.5,128-100,128+100));
+  Serial.println(map(lambda_setpoint_mode[0],0.5,1.5,128-100,128+100));
+  Serial.println("#Writing lambda to EEPROM");
 }
 
 void LoadLambda() {
-  //0-8 for P_calib
-  lambda_P[0] = EEPROM.read(9)/20-6.4; // stores -6.4 -> 6.4 at 0.05 resolution
-  lambda_I[0] = EEPROM.read(10)/20-6.4;
-  lambda_D[0] = EEPROM.read(11)/20-6.4;
+  byte val;
+  byte val2;
+  val = EEPROM.read(12); 
+  val2 = EEPROM.read(13);
+  Serial.println(val,DEC);
+  Serial.println(val2,DEC);
+  if (val == 128 && val2 >= 28 && val2 <= 228) { //check to see if lambda has been set
+    Serial.println("#Loading lambda setpoint from EEPROM");
+    val2 = map(EEPROM.read(13),128-100,128+100,0.5,1.5);
+  } else {
+    Serial.println("#Saving default lambda setpoint to EEPROM");
+    val = lambda_setpoint_mode[0]; //load the default value
+    EEPROM.write(12,128);
+    EEPROM.write(13, map(val,0.5,1.5,128-100,128+100));
+  }
+  lambda_setpoint = val2;
+  lambda_setpoint_mode[0] = lambda_setpoint;
 }
 
 

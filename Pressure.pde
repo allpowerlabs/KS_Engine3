@@ -9,7 +9,7 @@ void CalibratePressureSensors() {
   int P_sum[6] = {0,0,0,0};
   int P_ave;
   byte lowbyte,highbyte;
-  Serial.println("Calibrating Pressure Sensors");
+  Serial.println("#Calibrating Pressure Sensors");
   for (int i=0; i<10; i++) {
     Press_ReadAll();
     for (int j=0; j<6; j++) {
