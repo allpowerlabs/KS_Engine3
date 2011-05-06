@@ -3,7 +3,8 @@ void LogTime(boolean header = false) {
   if (header) {
     PrintColumn("Time");
   } else {
-    PrintColumnInt(millis()/100.0); // time since restart in deciseconds
+    Serial.print(millis()/100.0); // time since restart in deciseconds
+    Serial.print(", ");
   }
 }
 
