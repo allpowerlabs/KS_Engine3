@@ -17,7 +17,7 @@ void DoAuger() {
   
   #if ANA_FUEL_SWITCH != ABSENT
   FuelSwitchValue = analogRead(ANA_FUEL_SWITCH); // switch voltage, 1024 if on, 0 if off
-  if (FuelSwitchValue > 512) {
+  if (FuelSwitchValue > 600) {
     FuelSwitchLevel = SWITCH_ON;
     auger_on = true;
   } else {
