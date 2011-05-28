@@ -9,12 +9,13 @@ void DoAlarmUpdate() {
     auger_off_length++;
     auger_on_length = max(0,auger_on_length*.8-10);
   }
-  if (pRatioReactorLevel == BAD) {
+  if ((pRatioReactorLevel == PR_LOW || pRatioReactorLevel == PR_HIGH) && P_reactorLevel != OFF) {
     pressureRatioAccumulator += 1;
   } else {
-    pressureRatioAccumulator -= 2;
+    pressureRatioAccumulator -= 5;
   }
-  pressureRatioAccumulator = max(0,pressureRatioAccumulator);
+  pressureRatioAccumulator = max(0,pressureRatioAccumulator); //keep value above 0
+  pressureRatioAccumulator = min(pressureRatioAccumulator,20); //keep value below 20
 }
 
 void DoAlarm() {
@@ -28,11 +29,11 @@ void DoAlarm() {
       Serial.println("# Auger off too long");
       alarm = ALARM_AUGER_OFF_LONG;
     }
-    if (pressureRatioAccumulator > 300) {
+    if (pressureRatioAccumulator > 100) {
       Serial.println("# Pressure Ratio is bad");
       alarm = ALARM_BAD_REACTOR;
     }
-    if (filter_pratio_accumulator > 300) {
+    if (filter_pratio_accumulator > 100) {
       Serial.println("# Filter or gas flow may be blocked");
       alarm = ALARM_BAD_FILTER;
     }
@@ -43,17 +44,32 @@ void DoAlarm() {
     }
     #endif
   }
-  if ((Temp_Data[T_TRED] < 800) && engine_state == ENGINE_ON) {
+  if (engine_state == ENGINE_ON) {
+    if (T_tredLevel != HOT && T_tredLevel != EXCESSIVE) {
       Serial.println("# T_tred too low for running engine");
-      alarm = ALARM_HIGH_TRED;
-  }
-  if ((Temp_Data[T_BRED] > 900) && engine_state == ENGINE_ON) {
+      alarm = ALARM_LOW_TRED;
+    }
+    if ((Temp_Data[T_BRED] == EXCESSIVE)) {
       Serial.println("# T_bred too high for running engine");
       alarm = ALARM_HIGH_BRED;
+    }
+    #if ANA_OIL_PRESSURE != ABSENT
+    if (P_reactorLevel == OIL_P_LOW && millis()-engine_state_entered>10000) {
+      Serial.println("# Bad oil pressure");
+      alarm = ALARM_BAD_OIL_PRESSURE;
+    }
+    #endif
+     #if LAMBDA_SIGNAL_CHECK == TRUE
+    if (lambda_input < 0.52) {
+      Serial.println("# No O2 Sensor Signal");
+      alarm = ALARM_O2_NO_SIG;
+    }
+    #endif
   }
+
   if (alarm != ALARM_NONE) {
     digitalWrite(FET_ALARM, HIGH);
-  } else {
+  } else { 
     digitalWrite(FET_ALARM,LOW);
   }
 }
