@@ -26,12 +26,10 @@
 #define ANA_LAMBDA ANA0
 #define ANA_FUEL_SWITCH ANA1
 #define ANA_ENGINE_SWITCH ANA2
-#define ANA_BLOWER_DIAL ANA3
+#define ANA_BLOWER_DIAL ABSENT
 #define ANA_AUGER_CURRENT ABSENT  //sense current in auger motor
 #define ANA_BATT_V ABSENT
-#define ANA_V ABSENT
-#define ANA_CT_LEG1 ABSENT
-#define ANA_CT_LEG2 ABSENT
+#define ANA_OIL_PRESSURE ANA3
 
 // FET Mapping
 #define FET_AUGER FET0
@@ -110,6 +108,9 @@ Servo Servo_Throttle;
 #define ENGINE_STARTING 2
 #define ENGINE_GOV_TUNING 3
 
+//Lambda
+#define LAMBDA_SIGNAL_CHECK TRUE
+
 //Flare States
 #define FLARE_OFF 0
 #define FLARE_USER_SET 1
@@ -127,6 +128,9 @@ Servo Servo_Throttle;
 #define DISPLAY_SPLASH 0
 #define DISPLAY_REACTOR 1
 #define DISPLAY_ENGINE 2
+#define DISPLAY_TEST 3
+#define DISPLAY_LAMBDA 4
+#define DISPLAY_GRATE 5
 
 // Datalogging variables
 int lineCount = 0;
@@ -138,17 +142,17 @@ int grate_val = GRATE_SHAKE_INIT; //variable that is changed and checked
 int grate_pratio_accumulator = 0; // accumulate high pratio to trigger stronger shaking past threshhold
 int grate_max_interval = 5*60; //longest total interval in seconds
 int grate_min_interval = 60;
-int grate_on_interval = 2;
+int grate_on_interval = 3;
 //define these in init, how much to remove from grate_val each cycle [1 second] (slope)
-int m_grate_low; 
-int m_grate_high;
+int m_grate_bad; 
+int m_grate_good;
 int m_grate_on;
 
 // Reactor pressure ratio
 float pRatioReactor;
-enum pRatioReactorLevels { GOOD = 0,BAD = 1} pRatioReactorLevel;
-static char *pRatioReactorLevelName[] = { "Low", "High" };
-float pRatioReactorLevelBoundary[2][2] = { { 0.3, 0.9 }, {0.0, 0.3} };
+enum pRatioReactorLevels { PR_HIGH = 0, PR_CORRECT = 1, PR_LOW = 2} pRatioReactorLevel;
+static char *pRatioReactorLevelName[] = { "High", "Correct","Low" };
+float pRatioReactorLevelBoundary[3][2] = { { 0.6, 1.0 }, { 0.3, 0.6 }, {0.0, 0.3} };
 
 // Filter pressure ratio
 float pRatioFilter;
@@ -157,7 +161,7 @@ int filter_pratio_accumulator;
 
 // Temperature Levels
 #define TEMP_LEVEL_COUNT 5
-enum TempLevels { COLD = 0,COOL = 1,WARM = 2 ,HOT = 3, EXCESSIVE = 4};
+enum TempLevels { COLD = 0,COOL = 1,WARM = 2 ,HOT = 3, EXCESSIVE = 4} TempLevel;
 TempLevels T_tredLevel;
 static char *TempLevelName[] = { "Cold", "Cool", "Warm", "Hot", "Too Hot" };
 int T_tredLevelBoundary[TEMP_LEVEL_COUNT][2] = { { 0, 40 }, {50, 80}, {300,790}, {800,950}, {1000,1250} };
@@ -185,6 +189,12 @@ int AugerCurrentValue = 0; // current level in mA
 enum AugerCurrentLevels { AUGER_OFF = 0, AUGER_ON = 1, AUGER_HIGH = 2} AugerCurrentLevel;
 static char *AugerCurrentLevelName[] = { "Off","On", "High"};
 int AugerCurrentLevelBoundary[3][2] = { { 0, 1200}, {1200, 5000}, {5000,20000} };
+#endif
+
+#if ANA_OIL_PRESSURE != ABSENT
+int EngineOilPressureValue;
+enum EngineOilPressureLevels { OIL_P_LOW = 0, OIL_P_HIGH = 1} EngineOilPressureLevel;
+int EngineOilPressureLevelBoundary[2][2] = { { 0, 500}, {600, 1024} };
 #endif
 
 // Loop variables - 0 is longest, 3 is most frequent, place code at different levels in loop() to execute more or less frequently
@@ -224,6 +234,9 @@ double battery_voltage;
 //Display 
 int display_state = DISPLAY_SPLASH;
 unsigned long display_state_entered;
+unsigned long transition_entered;
+String transition_message;
+int item_count,cur_item;
 
 //Keypad
 int key;
@@ -256,8 +269,8 @@ double lambda_input;
 double lambda_output;
 double lambda_value;
 double lambda_setpoint_mode[1] = {1.05};
-double lambda_P[1] = {0.25}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
-double lambda_I[1] = {2.2}; //Make I_Param about the same as your manual response time (in Seconds)/4 
+double lambda_P[1] = {0.13}; //Adjust P_Param to get more aggressive or conservative control, change sign if moving in the wrong direction
+double lambda_I[1] = {1.0}; //Make I_Param about the same as your manual response time (in Seconds)/4 
 double lambda_D[1] = {0.0}; //Unless you know what it's for, don't use D
 PID lambda_PID(&lambda_input, &lambda_output, &lambda_setpoint,lambda_P[0],lambda_I[0],lambda_D[0]);
 unsigned long lamba_updated_time;
@@ -267,8 +280,8 @@ int lambda_state;
 unsigned long lambda_state_entered;
 
 //Governor
-//throttle open - 83°
-//closed - 0°
+//throttle open - 83¬∞
+//closed - 0¬∞
 double throttle_valve_open = 83; //calibrated angle for servo valve open
 double throttle_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
 //double throttle_valve_max = 1.00;  //minimum of range for closed loop operation (percent open)
@@ -328,8 +341,10 @@ int pressureRatioAccumulator = 0;
 #define ALARM_BAD_REACTOR 3
 #define ALARM_BAD_FILTER 4
 #define ALARM_LOW_FUEL_REACTOR 5
-#define ALARM_HIGH_TRED 6
+#define ALARM_LOW_TRED 6
 #define ALARM_HIGH_BRED 7
+#define ALARM_BAD_OIL_PRESSURE 8
+#define ALARM_O2_NO_SIG 9
 char* display_alarm[] = {
   "No alarm           ",
   "Auger on too long  ",
@@ -338,7 +353,9 @@ char* display_alarm[] = {
   "Bad Filter P_ratio ",
   "Reactor Fuel Low   ",
   "tred low for eng.  ",
-  "bred high for eng. "
+  "bred high for eng. ",
+  "Check Oil Pressure ",
+  "No O2 Sensor Signal"
 }; //20 char message for 4x20 display
 
 // SD Card
@@ -441,11 +458,13 @@ void loop() {
     DoHeartBeat(); // blink heartbeat LED
     //TODO: Add OpenEnergyMonitor Library
     if (millis() >= nextTime2) {
+      nextTime2 += loopPeriod2;
       DoDisplay();
       if (millis() >= nextTime1) {
         nextTime1 += loopPeriod1;
         DoGrate();
         DoFilter();
+        DoOilPressure();
         DoDatalogging();
 //      DoDatalogSD();
         DoAlarmUpdate();
@@ -457,3 +476,4 @@ void loop() {
     }
   }
 }
+

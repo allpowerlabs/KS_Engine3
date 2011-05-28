@@ -58,13 +58,13 @@ void DoSerialIn() {
       Serial.println(Servo_Calib.read());
       break;
     case 'l':
-      lambda_setpoint += 0.025;
+      lambda_setpoint += 0.01;
       Serial.print("#Lambda Setpoint now:");
       Serial.println(lambda_setpoint);
       WriteLambda();
       break;
     case 'L':
-      lambda_setpoint -= 0.025;
+      lambda_setpoint -= 0.01;
       Serial.print("#Lambda Setpoint now:");
       Serial.println(lambda_setpoint);
       WriteLambda();

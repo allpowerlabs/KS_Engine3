@@ -3,7 +3,7 @@ void LogTime(boolean header = false) {
   if (header) {
     PrintColumn("Time");
   } else {
-    Serial.print(millis()/100.0); // time since restart in deciseconds
+    Serial.print(millis()/100); // time since restart in deciseconds
     Serial.print(", ");
   }
 }
@@ -66,13 +66,13 @@ void LogAnalogInputs(boolean header = false) {
 
 void LogGrate(boolean header = false) {
   if (header) {
-    PrintColumn("grateMode");
+    //PrintColumn("grateMode");
     PrintColumn("Grate");
     PrintColumn("P_ratio_reactor");
     PrintColumn("P_ratio_state_reactor");
     PrintColumn("Grate_Val");
   } else {
-    PrintColumnInt(grateMode);
+    //PrintColumnInt(grateMode);
     PrintColumnInt(grate_motor_state);
     PrintColumn(pRatioReactor);
     PrintColumn(pRatioReactorLevel[pRatioReactorLevelName]);

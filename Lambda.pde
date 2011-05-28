@@ -4,9 +4,9 @@ void InitLambda() {
 }
 
 void DoLambda() {
+    lambda_input = GetLambda();
     switch(lambda_state) {
       case LAMBDA_CLOSEDLOOP:
-        lambda_input = GetLambda();
         //don't reset changed PID values
         //lambda_PID.SetTunings(lambda_P[0], lambda_I[0], lambda_D[0]);
         lambda_PID.Compute();
@@ -24,7 +24,6 @@ void DoLambda() {
         }
         break;
       case LAMBDA_SEALED:
-        lambda_input = GetLambda();
         if (engine_state == ENGINE_STARTING) {
           TransitionLambda(LAMBDA_CLOSEDLOOP);
         }
@@ -49,7 +48,6 @@ void DoLambda() {
         SetPremixServoAngle(lambda_output);
         break;
       case LAMBDA_SPSTEPTEST:
-        lambda_input = GetLambda();
         lambda_PID.SetTunings(lambda_P[0], lambda_I[0], lambda_D[0]);
         lambda_PID.Compute();
         SetPremixServoAngle(lambda_output);
@@ -133,32 +131,38 @@ void SetPremixServoAngle(double percent) {
 }
 
 void WriteLambda() {
-  // Write setpoint
-  lambda_setpoint_mode[0] = lambda_setpoint;
-  EEPROM.write(9,128);
-  EEPROM.write(10, map(lambda_setpoint_mode[0],0.5,1.5,128-100,128+100));
-  Serial.println(map(lambda_setpoint_mode[0],0.5,1.5,128-100,128+100));
-  Serial.println("#Writing lambda to EEPROM");
+  WriteLambda(lambda_setpoint);
+}
+
+void WriteLambda(double setpoint) {
+  int val,p,i;
+  p = constrain(lambda_PID.GetP_Param()*100,0,255);
+  i = constrain(lambda_PID.GetI_Param()*10,0,255);
+  lambda_setpoint_mode[0] = setpoint;
+  val = constrain(128+(setpoint-1.0)*100,0,255);
+  EEPROM.write(12,128); //check point
+  EEPROM.write(13, val);
+  EEPROM.write(14, p);
+  EEPROM.write(15, i);
+  Serial.println("#Writing lambda setttings to EEPROM");
 }
 
 void LoadLambda() {
-  byte val;
-  byte val2;
-  val = EEPROM.read(12); 
-  val2 = EEPROM.read(13);
-  Serial.println(val,DEC);
-  Serial.println(val2,DEC);
-  if (val == 128 && val2 >= 28 && val2 <= 228) { //check to see if lambda has been set
-    Serial.println("#Loading lambda setpoint from EEPROM");
-    val2 = map(EEPROM.read(13),128-100,128+100,0.5,1.5);
+  byte check;
+  double val,p,i;
+  check = EEPROM.read(12); 
+  val = 1.0+(EEPROM.read(13)-128)*0.01;
+  p = EEPROM.read(14)*0.01;
+  i = EEPROM.read(15)*0.1;
+  if (check == 128 && val >= 0.5 && val <= 1.5) { //check to see if lambda has been set
+    Serial.println("#Loading lambda from EEPROM");
+    lambda_setpoint = val;
+    lambda_PID.SetTunings(p,i,0);
   } else {
     Serial.println("#Saving default lambda setpoint to EEPROM");
-    val = lambda_setpoint_mode[0]; //load the default value
-    EEPROM.write(12,128);
-    EEPROM.write(13, map(val,0.5,1.5,128-100,128+100));
+    val = lambda_setpoint_mode[0];
+    WriteLambda(val);
   }
-  lambda_setpoint = val2;
-  lambda_setpoint_mode[0] = lambda_setpoint;
+  lambda_setpoint = val;
+  lambda_setpoint_mode[0] = val;
 }
-
-
