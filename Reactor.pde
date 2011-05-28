@@ -3,9 +3,9 @@ void DoFlare() {
     case FLARE_OFF:
       break;
     case FLARE_USER_SET:
-      if (Press[P_REACTOR] < -200) {
+     if (Press[P_REACTOR] < -200 && engine_state != ENGINE_ON) {
         ignitor_on = true;
-      }
+      } 
       if (Press[P_REACTOR] > -100) {
         ignitor_on = false;
       }
@@ -54,3 +54,4 @@ void DoReactor() {
 //  }
 }
   
+
