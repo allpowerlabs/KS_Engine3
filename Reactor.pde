@@ -3,15 +3,11 @@ void DoFlare() {
     case FLARE_OFF:
       break;
     case FLARE_USER_SET:
-     if (Press[P_REACTOR] < -200 && engine_state != ENGINE_ON) {
+      if (P_reactorLevel != OFF && engine_state != ENGINE_ON) {
         ignitor_on = true;
-      } 
-      if (Press[P_REACTOR] > -100) {
-        ignitor_on = false;
-      }
-      if (ignitor_on) {
         analogWrite(FET_FLARE_IGNITOR,255);
       } else {
+        ignitor_on = false;
         analogWrite(FET_FLARE_IGNITOR,0);
       }
       break;
