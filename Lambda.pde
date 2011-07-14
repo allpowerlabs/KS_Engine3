@@ -87,11 +87,11 @@ void TransitionLambda(int new_state) {
     case LAMBDA_CLOSEDLOOP:
       lambda_state_name = "Closed Loop";
       lambda_setpoint = lambda_setpoint_mode[0];
+      lambda_output = premix_valve_center;
       lambda_PID.SetMode(AUTO);
       lambda_PID.SetSampleTime(20);
       lambda_PID.SetInputLimits(0.5,1.5);
       lambda_PID.SetOutputLimits(premix_valve_min,premix_valve_max);
-      SetPremixServoAngle(premix_valve_center);
       break;
     case LAMBDA_SEALED:
       lambda_state_name = "Sealed";
