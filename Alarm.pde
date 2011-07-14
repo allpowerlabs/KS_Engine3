@@ -1,13 +1,18 @@
 void DoAlarmUpdate() {
   //TODO: Move these into their respective object control functions, not alarm
-  if (auger_on) {
-    // auger on
-    auger_on_length++;
-    auger_off_length = max(0,auger_off_length*0.8-10);
+  if (P_reactorLevel != OFF) {
+    if (auger_on) {
+      // auger on
+      auger_on_length++;
+      auger_off_length = 0;
+    } else {
+      // auger off
+      auger_off_length++;
+      auger_on_length = 0;
+    }
   } else {
-    // auger off
-    auger_off_length++;
-    auger_on_length = max(0,auger_on_length*.8-10);
+    auger_on_length = 0;
+    auger_off_length = 0;
   }
   if ((pRatioReactorLevel == PR_LOW || pRatioReactorLevel == PR_HIGH) && P_reactorLevel != OFF) {
     pressureRatioAccumulator += 1;
