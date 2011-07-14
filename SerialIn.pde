@@ -75,7 +75,7 @@ void DoSerialIn() {
       Serial.println(loopPeriod1);
       break;
     case 'T':
-      loopPeriod1 = min(loopPeriod1-100,loopPeriod2);
+      loopPeriod1 = max(loopPeriod1-100,loopPeriod0);
       Serial.print("#Sample Period now:");
       Serial.println(loopPeriod1);
       break;
