@@ -65,10 +65,10 @@ void DoDisplay() {
       Disp_RC(2,0);
       if (P_reactorLevel != OFF) {
         //the value only means anything if the pressures are high enough, otherwise it is just noise
-        sprintf(buf, "Prati%4i  ", int(pRatioReactor*100)); //pressure ratio
+        sprintf(buf, "Pratio %3i  ", int(pRatioReactor*100)); //pressure ratio
         Disp_PutStr(buf);
       } else {
-        Disp_PutStr("Prati  --  ");
+        Disp_PutStr("Pratio --  ");
       }
       Disp_RC(2, 11);
       if (true) {
@@ -288,14 +288,7 @@ void DoDisplay() {
           if (key == 2) {
             grate_motor_state = GRATE_MOTOR_OFF;
           }
-          if (key == 3) {
-            grate_motor_state = GRATE_MOTOR_LOW;
-          }
-          if (grate_motor_state == GRATE_MOTOR_OFF) {
-            digitalWrite(FET_GRATE,LOW);
-          } else {
-            digitalWrite(FET_GRATE,HIGH);
-          }
+          grate_val = GRATE_SHAKE_CROSS;
           Disp_RC(3,0);
           Disp_PutStr("NEXT  ADV  OFF   ON ");
           Disp_RC(1,11);
