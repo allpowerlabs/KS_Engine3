@@ -10,7 +10,7 @@
 #include <fet.h>            // part of KSlibs, control FETs (field effect transitor) to drive motors, solenoids, etc
 #include <keypad.h>         // part of KSlibs, read buttons and keypad
 #include <pressure.h>       // part of KSlibs, read pressure sensors
-#include <servos.h>          // part of KSlibs, not implemented
+#include <servos.h>         // part of KSlibs, not implemented
 #include <temp.h>           // part of KSlibs, read thermocouples
 #include <timer.h>          // part of KSlibs, not implemented
 #include <ui.h>             // part of KSlibs, menu
@@ -59,19 +59,19 @@ Servo Servo_Throttle;
 #define T_PYRO_IN ABSENT
 #define T_PYRO_OUT ABSENT
 #define T_COMB ABSENT
-#define T_REACTOR_GAS_OUT ABSENT
+#define T_REACTOR_GAS_OUT 3
 #define T_DRYING_GAS_OUT ABSENT
 #define T_FILTER ABSENT
-#define T_ENG_COOLANT ABSENT
+#define T_ENG_COOLANT 2
 #define T_LOW_FUEL ABSENT
 
 //Pressure Mapping
 #define P_REACTOR 0
-#define P_COMB 4
+#define P_COMB 2
 #define P_FILTER 1
 #define P_Q_AIR_ENG ABSENT
-#define P_Q_AIR_RCT ABSENT
-#define P_Q_GAS_ENG ABSENT
+#define P_Q_AIR_RCT 4
+#define P_Q_GAS_ENG 5
 
 //Interrupt Mapping
 // 2 - pin 21 - PD0
@@ -259,8 +259,19 @@ volatile int energy_period;
 // Servo Valve Calibration - will vary depending on the servo valve
 //PP #2 (now upgraded to #7)
 //TO DO: Move to % based on open/closed instead of degrees
-double premix_valve_open = 180; //calibrated angle for servo valve open
-double premix_valve_closed = 105; //calibrated angle for servo valve closed (must be smaller value than open)
+//double premix_valve_open = 180; //calibrated angle for servo valve open
+//double premix_valve_closed = 105; //calibrated angle for servo valve closed (must be smaller value than open)
+//New batch of throttle bodies from Jewen
+
+//double premix_valve_open = 153; //calibrated angle for servo valve open
+//double premix_valve_closed = 53; //calibrated angle for servo valve closed (must be smaller value than open)
+//PP20 Jewen Throttle - apparent variation in throttle angle to servo angle in this batch, need to add calibration/storage in EEPROM...
+double premix_valve_open = 133; 
+double premix_valve_closed = 68;
+//Jewen Throttle
+//double premix_valve_open = 110; //calibrated angle for servo valve open
+//double premix_valve_closed = 30; //calibrated angle for servo valve closed (must be smaller value than open)
+
 double premix_valve_max = 1.0;  //minimum of range for closed loop operation (percent open)
 double premix_valve_min = 0.00; //maximum of range for closed loop operation (percent open)
 double premix_valve_center = 0.00; //initial value when entering closed loop operation (percent open)
@@ -282,8 +293,8 @@ unsigned long lambda_state_entered;
 //Governor
 //throttle open - 83¬∞
 //closed - 0¬∞
-double throttle_valve_open = 83; //calibrated angle for servo valve open
-double throttle_valve_closed = 0; //calibrated angle for servo valve closed (must be smaller value than open)
+double throttle_valve_open = 123; //calibrated angle for servo valve open
+double throttle_valve_closed = 48; //calibrated angle for servo valve closed (must be smaller value than open)
 //double throttle_valve_max = 1.00;  //minimum of range for closed loop operation (percent open)
 //double throttle_valve_min = 0.00; //maximum of range for closed loop operation (percent open)
 double governor_setpoint;
@@ -300,9 +311,9 @@ int Press_Calib[6];
 int Press[6]; //values corrected for sensor offset (calibration)
 
 // Flow variables
-float CfA0_air_rct =0.42123;
+float CfA0_air_rct = 0.6555;
 float CfA0_air_eng = 0.6555;
-float CfA0_gas_eng = 0.81046;
+float CfA0_gas_eng = 4.13698;
 double air_eng_flow;
 double air_rct_flow;
 double gas_eng_flow;
@@ -420,6 +431,7 @@ void setup() {
   //Servo_Reset();
   Timer_Reset();
   
+  InitFlow();
   InitLambda();
   InitServos();
   InitGrate();  
