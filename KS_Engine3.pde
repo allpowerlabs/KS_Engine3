@@ -37,11 +37,9 @@
 #define FET_IGNITION FET2
 #define FET_STARTER FET3
 #define FET_FLARE_IGNITOR FET4
-//FET5
+#define FET_O2_RESET FET5
 #define FET_ALARM FET6
-//FET7
 #define FET_BLOWER ABSENT
-
 
 //Servo Mapping
 //TODO: Use these define
