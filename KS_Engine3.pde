@@ -131,7 +131,26 @@ Servo Servo_Throttle;
 #define DISPLAY_TEST 3
 #define DISPLAY_LAMBDA 4
 #define DISPLAY_GRATE 5
+#define DISPLAY_TESTING 6
 
+//Testing States
+#define TESTING_OFF 0
+#define TESTING_FUEL_AUGER 1
+#define TESTING_GRATE 2
+#define TESTING_ENGINE_IGNITION 3
+#define TESTING_STARTER 4
+#define TESTING_FLARE_IGNITOR 5
+#define TESTING_O2_RESET 6
+#define TESTING_ALARM 7
+#define TESTING_ANA_LAMBDA 8
+#define TESTING_ANA_ENGINE_SWITCH 9
+#define TESTING_ANA_FUEL_SWITCH 10
+#define TESTING_ANA_OIL_PRESSURE 11
+
+//Test Variables
+int testing_state = TESTING_OFF;
+unsigned long testing_state_entered = 0;
+static char *TestingStateName[] = { "Off","Auger","Grate","Engine","Starter","Flare","O2 Reset","Alarm","ANA_Lambda","ANA_Eng_Switch","ANA_Fuel_Switch","ANA_Oil"};
 // Datalogging variables
 int lineCount = 0;
 
