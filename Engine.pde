@@ -7,9 +7,8 @@ void DoEngine() {
       SetThrottleAngle(0);
       break;
     case ENGINE_ON:
-      if (control_state == CONTROL_OFF) {
+      if (control_state == CONTROL_OFF & millis()-control_state_entered > 100) {
         TransitionEngine(ENGINE_OFF);
-
       }
       if (control_state == CONTROL_START) {
         TransitionEngine(ENGINE_STARTING);
@@ -25,7 +24,7 @@ void DoEngine() {
 //      #endif
       break;
     case ENGINE_STARTING:
-      if (control_state == CONTROL_OFF) {
+      if (control_state == CONTROL_OFF & millis()-control_state_entered > 100) {
         TransitionEngine(ENGINE_OFF);
       }
       SetThrottleAngle(100); // % open
