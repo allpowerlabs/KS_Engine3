@@ -12,17 +12,18 @@ void DoDisplay() {
     //Row 0
     Disp_RC(0,0);
     if (GCU_version == V2) {
-      Disp_PutStr("   KS GCU V 2.02    ");
+      Disp_PutStr("   KS GCU V 2.0    ");
     } 
     else if (GCU_version == V3) {
-      Disp_PutStr("    KS PCU V 3.02    ");
+      Disp_PutStr("    KS PCU V 3.0    ");
     }
     //Row 1
     Disp_RC(1,0);
     Disp_PutStr("www.allpowerlabs.org");
     //Row 2
     Disp_RC(2,0);
-    Disp_PutStr("       APL 2011     ");
+    sprintf(buf, "        %s        ", CODE_VERSION);
+    Disp_PutStr(buf);
     //Row 3
     Disp_RC(3,0);
     Disp_PutStr("                    ");

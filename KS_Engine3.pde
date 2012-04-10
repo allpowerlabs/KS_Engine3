@@ -16,11 +16,14 @@
 #include <ui.h>             // part of KSlibs, menu
 #include <util.h>           // part of KSlibs, utility functions, GCU_Setup
 #include <avr/io.h>         // advanced: provides port definitions for the microcontroller (ATmega1280, http://www.atmel.com/dyn/resources/prod_documents/doc2549.PDF)   
-
-#define ABSENT -500
 //#include <SdFat.h>
 //#include <SdFatUtil.h> 
 //#include <ctype.h>
+
+//constant definitions
+#define ABSENT -500
+
+#define CODE_VERSION "v1.00"
 
 // Analog Input Mapping
 #define ANA_LAMBDA ANA0
@@ -227,6 +230,7 @@ unsigned long nextTime3;
 
 //Control
 int control_state = CONTROL_OFF;
+unsigned long control_state_entered;
 
 //Flare
 int flare_state = FLARE_USER_SET;
@@ -256,7 +260,7 @@ String transition_message;
 int item_count,cur_item;
 
 //Keypad
-int key;
+int key = -1;
 
 //Hertz
 double hertz = 0;
